@@ -15,7 +15,7 @@ services:
       - POSTGRES_PASSWORD=ewm
       - DB_HOST=stats-db
       - DB_PORT=6541
-      - TZ=Europe/Moscow
+      #- TZ=Europe/Moscow
 
   stats-db:
     image: postgres:14-alpine
@@ -29,8 +29,8 @@ services:
       - POSTGRES_DB=stat
       - POSTGRES_USER=ewm
       - POSTGRES_PASSWORD=ewm
-      - TZ=Europe/Moscow
-      - PGTZ=Europe/Moscow
+      #- TZ=Europe/Moscow
+      #- PGTZ=Europe/Moscow
 
   ewm-service:
     build: ewm-core/ewm-core-business
@@ -49,7 +49,7 @@ services:
       - DB_HOST=ewm-db
       - DB_PORT=6542
       - EWM_STATS_SERVER_URL=http://stats-server:9090
-      - TZ=Europe/Moscow
+      #- TZ=Europe/Moscow
 
   ewm-db:
     image: postgres:14-alpine
@@ -63,5 +63,5 @@ services:
       - POSTGRES_DB=ewm
       - POSTGRES_USER=ewm
       - POSTGRES_PASSWORD=ewm
-      - TZ=Europe/Moscow
-      - PGTZ=Europe/Moscow
+      #- TZ=Europe/Moscow
+      #- PGTZ=Europe/Moscow
