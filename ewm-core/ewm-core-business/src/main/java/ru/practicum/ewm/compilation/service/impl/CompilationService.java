@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @Service
 public class CompilationService implements CompilationPublicService, CompilationAdminService {
 
-    private final LocalDateTime epochStart = LocalDateTime.of(1970, 1, 1, 0, 0, 0);;
+    private final LocalDateTime epochStart = LocalDateTime.of(1970, 1, 1, 0, 0, 0);
     private final LocalDateTime epochEnd = LocalDateTime.of(2100, 12, 31, 23, 59, 59);
     private final String uri = "/events";
 
@@ -163,7 +163,7 @@ public class CompilationService implements CompilationPublicService, Compilation
     }
 
     private void validateEventAdding(Compilation compilation, Event event) {
-        if(compilation.getEvents().contains(event)) {
+        if (compilation.getEvents().contains(event)) {
             throw new BadRequestException("Event added to compilation already before");
         }
     }

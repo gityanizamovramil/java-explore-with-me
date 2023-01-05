@@ -1,7 +1,6 @@
 package ru.practicum.ewm.user.model;
 
 import lombok.*;
-import ru.practicum.ewm.category.model.Category;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;

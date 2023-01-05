@@ -1,7 +1,6 @@
 package ru.practicum.ewm.request.model;
 
 import lombok.*;
-import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.common.RequestStatus;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.user.model.User;

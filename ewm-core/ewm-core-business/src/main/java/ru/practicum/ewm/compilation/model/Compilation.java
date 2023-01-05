@@ -31,8 +31,8 @@ public class Compilation {
             },
             targetEntity = Event.class
     )
-    @JoinTable(name="events_compilations",
-            inverseJoinColumns = @JoinColumn(name="event_id"),
+    @JoinTable(name = "events_compilations",
+            inverseJoinColumns = @JoinColumn(name = "event_id"),
             joinColumns = @JoinColumn(name = "compilation_id"),
             foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT),
             inverseForeignKey = @ForeignKey(ConstraintMode.CONSTRAINT)

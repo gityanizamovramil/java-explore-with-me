@@ -50,7 +50,7 @@ public class StatsController {
             @RequestParam(required = false) List<String> uris,
             @RequestParam(defaultValue = "false") Boolean unique
     ) {
-        List<ViewStatsDto> viewStats= endpointHitService.getViewStats(start, end, uris, unique);
+        List<ViewStatsDto> viewStats = endpointHitService.getViewStats(start, end, uris, unique);
         log.info("Starting logging getted views:");
         log.info(start.toString());
         log.info(end.toString());

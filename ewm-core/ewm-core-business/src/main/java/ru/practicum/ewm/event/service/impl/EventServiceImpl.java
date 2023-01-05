@@ -146,8 +146,8 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
     }
 
     private void pullConfirmsToEvents(List<Event> events) {
-        events.forEach(e -> e.setConfirmedRequests
-                (countParticipationRequests(e.getId(), RequestStatus.CONFIRMED) == null ?
+        events.forEach(e -> e.setConfirmedRequests(
+                countParticipationRequests(e.getId(), RequestStatus.CONFIRMED) == null ?
                         0L : countParticipationRequests(e.getId(), RequestStatus.CONFIRMED)));
     }
 
@@ -244,8 +244,7 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
     }
 
     private void validateEventStates(List<EventState> states) {
-        states.forEach(s ->
-        {
+        states.forEach(s -> {
             List<EventState> values = Arrays.asList(EventState.values());
             if (!values.contains(s)) {
                 throw new NotFoundException("Event state that specified by admin in his list does not exist");

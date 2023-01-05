@@ -22,10 +22,10 @@ public class BaseClient {
     }
 
     protected <T> Optional<T> exchange(String path,
-                                     HttpMethod method,
-                                     @Nullable T object,
-                                     ParameterizedTypeReference<T> typeReference,
-                                     Map<String, Object> parameters) {
+                                       HttpMethod method,
+                                       @Nullable T object,
+                                       ParameterizedTypeReference<T> typeReference,
+                                       Map<String, Object> parameters) {
         HttpEntity<T> requestEntity = new HttpEntity<>(object, defaultHeaders());
         ResponseEntity<T> responseEntity;
         try {

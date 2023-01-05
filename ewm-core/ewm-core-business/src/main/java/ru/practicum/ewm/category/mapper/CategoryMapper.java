@@ -29,6 +29,6 @@ public class CategoryMapper {
     }
 
     public static void matchCategory(Category category, CategoryDto categoryDto) {
-        if(categoryDto.getName() != null) category.setName(categoryDto.getName());
+        if (categoryDto.getName() != null) category.setName(categoryDto.getName());
     }
 }

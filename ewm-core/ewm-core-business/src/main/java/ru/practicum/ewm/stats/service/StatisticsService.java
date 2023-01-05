@@ -12,10 +12,10 @@ public interface StatisticsService {
     void makeView(HttpServletRequest request);
 
     List<ViewStatsDto> getSomeViews(LocalDateTime rangeStart,
-                                LocalDateTime rangeEnd,
-                                List<Long> idList,
-                                String uri,
-                                Boolean unique);
+                                    LocalDateTime rangeEnd,
+                                    List<Long> idList,
+                                    String uri,
+                                    Boolean unique);
 
     Optional<ViewStatsDto> getView(LocalDateTime rangeStart,
                                    LocalDateTime rangeEnd,

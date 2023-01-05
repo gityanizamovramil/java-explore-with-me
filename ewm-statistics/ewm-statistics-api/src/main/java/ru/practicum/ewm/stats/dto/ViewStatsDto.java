@@ -1,6 +1,5 @@
 package ru.practicum.ewm.stats.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +32,6 @@ public class ViewStatsDto {
         StringBuilder sb = new StringBuilder();
         sb.append(this.uri);
         int lastIndex = sb.lastIndexOf("/");
-        return Long.parseLong(sb. substring(lastIndex+1));
+        return Long.parseLong(sb.substring(lastIndex + 1));
     }
 }
