@@ -5,14 +5,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.ewm.common.ApiError;
-import ru.practicum.ewm.common.Pattern;
 import ru.practicum.ewm.exception.BadRequestException;
 import ru.practicum.ewm.exception.ConflictException;
 import ru.practicum.ewm.exception.ForbiddenException;
 import ru.practicum.ewm.exception.NotFoundException;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,7 +60,7 @@ public class ExceptionApiHandler {
                 .message(exception.getMessage())
                 .reason(reason)
                 .status(httpStatus.toString())
-                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern(Pattern.LOCAL_DATE_TIME_FORMAT)))
+                .timestamp(LocalDateTime.now())
                 .build();
     }
 

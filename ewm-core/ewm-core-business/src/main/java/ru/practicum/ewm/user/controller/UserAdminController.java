@@ -43,9 +43,7 @@ public class UserAdminController {
     Добавление нового пользователя
      */
     @PostMapping
-    public UserDto postUserByAdmin(
-            @RequestBody @Valid NewUserRequest newUserRequest
-    ) {
+    public UserDto postUserByAdmin(@RequestBody @Valid NewUserRequest newUserRequest) {
         return userAdminService.create(newUserRequest);
     }
 
@@ -53,9 +51,7 @@ public class UserAdminController {
     Удаление пользователя
      */
     @DeleteMapping("/{userId}")
-    public void deleteUserByAdmin(
-            @PathVariable @NotNull @Positive Long userId
-    ) {
+    public void deleteUserByAdmin(@PathVariable @NotNull @Positive Long userId) {
         userAdminService.delete(userId);
     }
 }

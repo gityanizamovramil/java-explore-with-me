@@ -35,7 +35,7 @@ public class Event {
     private Category category;
 
     @Transient
-    private Long confirmedRequests;
+    private Long confirmedRequests = 0L;
 
     @Column(name = "created_on")
     private LocalDateTime createdOn;

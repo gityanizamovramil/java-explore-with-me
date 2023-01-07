@@ -30,7 +30,8 @@ public class ParticipationRequestService implements ParticipationRequestPrivateS
     private final UserRepository userRepository;
 
     public ParticipationRequestService(ParticipationRequestRepository participationRequestRepository,
-                                       EventRepository eventRepository, UserRepository userRepository) {
+                                       EventRepository eventRepository,
+                                       UserRepository userRepository) {
         this.participationRequestRepository = participationRequestRepository;
         this.eventRepository = eventRepository;
         this.userRepository = userRepository;
@@ -136,11 +137,8 @@ public class ParticipationRequestService implements ParticipationRequestPrivateS
     }
 
     private void validateRequestRepeating(Event event, User requester) {
-        List<ParticipationRequest> participationRequests =
-                participationRequestRepository.findAllByRequester_IdAndEvent_Id(requester.getId(), event.getId());
-        if (!participationRequests.isEmpty()) {
+        if (participationRequestRepository.existsByRequester_IdAndEvent_Id(requester.getId(), event.getId()))
             throw new BadRequestException("Participation request for the event is already created before by user");
-        }
     }
 
     private Event findEventById(Long eventId) {
@@ -220,7 +218,6 @@ public class ParticipationRequestService implements ParticipationRequestPrivateS
         //если для события лимит заявок равен 0 или отключена пре-модерация заявок, то подтверждение заявок не требуется
         if (!event.getRequestModeration() || event.getParticipantLimit().equals(0)) {
             return;
-            //throw new BadRequestException("Event does not need participation request confirmation");
         }
         //нельзя подтвердить заявку, если уже достигнут лимит по заявкам на данное событие
         Long confirms = participationRequestRepository.countByEvent_IdAndStatus(event.getId(), RequestStatus.CONFIRMED);

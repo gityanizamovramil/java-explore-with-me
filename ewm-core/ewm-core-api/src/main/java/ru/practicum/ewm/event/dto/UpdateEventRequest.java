@@ -1,11 +1,9 @@
 package ru.practicum.ewm.event.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.ewm.common.Pattern;
 
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
@@ -25,7 +23,6 @@ public class UpdateEventRequest {
     private String description;
 
     @Future
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Pattern.LOCAL_DATE_TIME_FORMAT)
     private LocalDateTime eventDate;
 
     @NotNull

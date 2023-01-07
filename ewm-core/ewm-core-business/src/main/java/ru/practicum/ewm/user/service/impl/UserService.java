@@ -3,6 +3,7 @@ package ru.practicum.ewm.user.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.exception.ConflictException;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.user.dto.NewUserRequest;
@@ -13,7 +14,6 @@ import ru.practicum.ewm.user.repository.UserRepository;
 import ru.practicum.ewm.user.service.UserAdminService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService implements UserAdminService {
@@ -33,6 +33,7 @@ public class UserService implements UserAdminService {
     }
 
     @Override
+    @Transactional
     public UserDto create(NewUserRequest newUserRequest) {
         validateUserEmail(newUserRequest.getEmail());
         User user = UserMapper.toUser(newUserRequest);
@@ -40,19 +41,21 @@ public class UserService implements UserAdminService {
     }
 
     @Override
+    @Transactional
     public void delete(Long userId) {
-        findById(userId);
+        existsById(userId);
         userRepository.deleteById(userId);
     }
 
-    private void validateUserEmail(String email) {
-        Optional<User> sameEmailUser = userRepository.findUserByEmailIgnoreCase(email);
-        sameEmailUser.ifPresent(user -> {
-            throw new ConflictException("The email of user is already in use.");
-        });
+    private void existsById(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException("User not found");
+        }
     }
 
-    private User findById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
+    private void validateUserEmail(String email) {
+        if (userRepository.existsByEmailIgnoreCase(email)) {
+            throw new ConflictException("The email of user is already in use.");
+        }
     }
 }

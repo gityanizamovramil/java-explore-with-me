@@ -1,11 +1,10 @@
 package ru.practicum.ewm.stats.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.ewm.common.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
@@ -43,9 +42,9 @@ public class EndpointHitDto {
     /*
     Дата и время, когда был совершен запрос к эндпоинту (в формате "yyyy-MM-dd HH:mm:ss")
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Pattern.LOCAL_DATE_TIME_FORMAT)
     private LocalDateTime timestamp;
 
+    @JsonIgnore
     public static EndpointHitDto fromHttpServletRequest(HttpServletRequest request, String appName) {
         return EndpointHitDto.builder()
                 .app(appName)

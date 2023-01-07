@@ -16,6 +16,7 @@ import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.exception.BadRequestException;
 import ru.practicum.ewm.exception.NotFoundException;
+import ru.practicum.ewm.request.model.RequestCount;
 import ru.practicum.ewm.request.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.stats.dto.ViewStatsDto;
 import ru.practicum.ewm.stats.service.StatisticsService;
@@ -56,7 +57,6 @@ public class CompilationService implements CompilationPublicService, Compilation
     Получение подборок событий
      */
     @Override
-    @Transactional
     public List<CompilationDto> getSomeCompilationsByPublic(Boolean pinned, Integer from, Integer size) {
         PageRequest pageRequest = PageRequest.of(from / size, size);
         List<Compilation> compilations = compilationRepository.findAllByPinned(pinned, pageRequest);
@@ -72,7 +72,6 @@ public class CompilationService implements CompilationPublicService, Compilation
     Получение подборки событий по его id
      */
     @Override
-    @Transactional
     public CompilationDto getCompilationByPublic(Long compId) {
         Compilation compilation = findById(compId);
         List<Event> events = new ArrayList<>(compilation.getEvents());
@@ -102,8 +101,14 @@ public class CompilationService implements CompilationPublicService, Compilation
     @Override
     @Transactional
     public void deleteCompilationByAdmin(Long compId) {
-        Compilation compilation = findById(compId);
+        existsById(compId);
         compilationRepository.deleteById(compId);
+    }
+
+    private void existsById(Long compId) {
+        if (!compilationRepository.existsById(compId)) {
+            throw new NotFoundException("Compilation not found.");
+        }
     }
 
     /*
@@ -206,12 +211,19 @@ public class CompilationService implements CompilationPublicService, Compilation
         });
     }
 
-
     private void pullConfirmsToEvents(List<Event> events) {
-        events.forEach(e -> e.setConfirmedRequests(countParticipationRequests(e.getId(), RequestStatus.CONFIRMED)));
+        Map<Long, Event> eventMap = new HashMap<>();
+        events.forEach(e -> {
+            eventMap.put(e.getId(), e);
+        });
+        List<Long> eventIds = new ArrayList<>(eventMap.keySet());
+        List<RequestCount> counts = countParticipationRequests(eventIds, RequestStatus.CONFIRMED);
+        counts.forEach(c -> {
+            eventMap.get(c.getEventId()).setConfirmedRequests(c.getParticipationCount());
+        });
     }
 
-    private Long countParticipationRequests(Long eventId, RequestStatus requestStatus) {
-        return participationRequestRepository.countByEvent_IdAndStatus(eventId, requestStatus);
+    private List<RequestCount> countParticipationRequests(List<Long> eventIds, RequestStatus requestStatus) {
+        return participationRequestRepository.fetchRequestCountsByEvent_IdAndStatus(eventIds, requestStatus);
     }
 }

@@ -3,6 +3,7 @@ package ru.practicum.ewm.category.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.dto.NewCategoryDto;
 import ru.practicum.ewm.category.mapper.CategoryMapper;
@@ -26,6 +27,7 @@ public class CategoryServiceImpl implements CategoryPublicService, CategoryAdmin
     }
 
     @Override
+    @Transactional
     public CategoryDto update(CategoryDto categoryDto) {
         Category category = findById(categoryDto.getId());
         validateCategoryName(categoryDto.getName());
@@ -34,6 +36,7 @@ public class CategoryServiceImpl implements CategoryPublicService, CategoryAdmin
     }
 
     @Override
+    @Transactional
     public CategoryDto create(NewCategoryDto newCategoryDto) {
         validateCategoryName(newCategoryDto.getName());
         Category category = CategoryMapper.toCategory(newCategoryDto);
@@ -41,8 +44,9 @@ public class CategoryServiceImpl implements CategoryPublicService, CategoryAdmin
     }
 
     @Override
+    @Transactional
     public void delete(Long catId) {
-        findById(catId);
+        existsById(catId);
         categoryRepository.deleteById(catId);
     }
 
@@ -56,9 +60,14 @@ public class CategoryServiceImpl implements CategoryPublicService, CategoryAdmin
         return CategoryMapper.toCategoryDto(findById(catId));
     }
 
+    private void existsById(Long catId) {
+        if (!categoryRepository.existsById(catId)) {
+            throw new NotFoundException("Category not found.");
+        }
+    }
+
     private void validateCategoryName(String name) {
-        List<Category> sameNameCategories = categoryRepository.findAllByNameIgnoreCase(name);
-        if (!sameNameCategories.isEmpty()) {
+        if (categoryRepository.existsByNameIgnoreCase(name)) {
             throw new ConflictException("The name of category is already in use.");
         }
     }

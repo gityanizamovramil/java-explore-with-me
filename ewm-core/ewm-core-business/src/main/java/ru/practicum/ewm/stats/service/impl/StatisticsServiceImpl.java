@@ -1,6 +1,5 @@
 package ru.practicum.ewm.stats.service.impl;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.practicum.ewm.stats.client.StatsClient;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-@Slf4j
 public class StatisticsServiceImpl implements StatisticsService {
 
     private static final String APP_NAME = "ewm-main-service";
@@ -27,25 +25,6 @@ public class StatisticsServiceImpl implements StatisticsService {
     public StatisticsServiceImpl(StatsClient statsClient) {
         this.statsClient = statsClient;
     }
-
-
-
-    /*@Autowired
-    public StatisticsServiceImpl(@Value("${ewm-stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
-
-        statsClient = new StatsClient(
-                builder
-                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
-                        .requestFactory(HttpComponentsClientHttpRequestFactory::new)
-                        .build()
-        );
-        *//*statsClient = new StatsClient(
-                new RestTemplateBuilder()
-                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
-                        .requestFactory(HttpComponentsClientHttpRequestFactory::new)
-                        .build()
-        );*//*
-    }*/
 
     @Override
     public void makeView(HttpServletRequest request) {

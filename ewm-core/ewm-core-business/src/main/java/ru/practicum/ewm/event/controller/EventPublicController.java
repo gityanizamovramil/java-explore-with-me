@@ -2,11 +2,9 @@ package ru.practicum.ewm.event.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.common.EventSort;
-import ru.practicum.ewm.common.Pattern;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.service.EventPublicService;
@@ -39,10 +37,8 @@ public class EventPublicController {
             @RequestParam(required = false) String text,
             @RequestParam(required = false) List<Long> categories,
             @RequestParam(required = false) Boolean paid,
-            @RequestParam(required = false)
-            @DateTimeFormat(pattern = Pattern.LOCAL_DATE_TIME_FORMAT) LocalDateTime rangeStart,
-            @RequestParam(required = false)
-            @DateTimeFormat(pattern = Pattern.LOCAL_DATE_TIME_FORMAT) LocalDateTime rangeEnd,
+            @RequestParam(required = false) LocalDateTime rangeStart,
+            @RequestParam(required = false) LocalDateTime rangeEnd,
             @RequestParam(defaultValue = "false") Boolean onlyAvailable,
             @RequestParam(required = false) EventSort sort,
             @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
@@ -59,10 +55,7 @@ public class EventPublicController {
     Получение подробной информации об опубликованном событии по его идентификатору
      */
     @GetMapping("/{id}")
-    public EventFullDto getEventByPublic(
-            @PathVariable @NotNull @Positive Long id,
-            HttpServletRequest request
-    ) {
+    public EventFullDto getEventByPublic(@PathVariable @NotNull @Positive Long id, HttpServletRequest request) {
         log.info("client ip: {}", request.getRemoteAddr());
         log.info("endpoint path: {}", request.getRequestURI());
         return eventPublicService.getEventByPublic(id, request);

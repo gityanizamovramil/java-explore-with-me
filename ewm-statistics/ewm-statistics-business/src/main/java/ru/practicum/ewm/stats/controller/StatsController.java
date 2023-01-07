@@ -2,11 +2,9 @@ package ru.practicum.ewm.stats.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.common.Pattern;
 import ru.practicum.ewm.stats.dto.EndpointHitDto;
 import ru.practicum.ewm.stats.dto.ViewStatsDto;
 import ru.practicum.ewm.stats.service.EndpointHitService;
@@ -45,17 +43,14 @@ public class StatsController {
     @GetMapping("/stats")
     @Transactional
     public List<ViewStatsDto> getViewStats(
-            @RequestParam @DateTimeFormat(pattern = Pattern.LOCAL_DATE_TIME_FORMAT) LocalDateTime start,
-            @RequestParam @DateTimeFormat(pattern = Pattern.LOCAL_DATE_TIME_FORMAT) LocalDateTime end,
+            @RequestParam LocalDateTime start,
+            @RequestParam LocalDateTime end,
             @RequestParam(required = false) List<String> uris,
             @RequestParam(defaultValue = "false") Boolean unique
     ) {
         List<ViewStatsDto> viewStats = endpointHitService.getViewStats(start, end, uris, unique);
-        log.info("Starting logging getted views:");
-        log.info(start.toString());
-        log.info(end.toString());
-        log.info(uris.toString());
-        log.info(viewStats.toString());
+        log.info("\n \nStarting logging views stats:\nviews: {}\nstart: {}\nend: {}\nuris: {}\n ",
+                viewStats, start, end, uris);
         return viewStats;
     }
 }

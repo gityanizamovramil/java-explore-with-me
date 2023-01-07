@@ -20,9 +20,7 @@ public class ParticipationRequestMapper {
                 .collect(Collectors.toList());
     }
 
-    public static ParticipationRequestDto toParticipationRequestDto(
-            ParticipationRequest participationRequest
-    ) {
+    public static ParticipationRequestDto toParticipationRequestDto(ParticipationRequest participationRequest) {
         return ParticipationRequestDto.builder()
                 .id(participationRequest.getId())
                 .created(participationRequest.getCreated())

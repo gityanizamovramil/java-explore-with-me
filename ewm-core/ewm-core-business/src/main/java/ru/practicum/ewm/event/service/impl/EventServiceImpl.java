@@ -1,6 +1,5 @@
 package ru.practicum.ewm.event.service.impl;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -26,6 +25,7 @@ import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.location.mapper.LocationMapper;
 import ru.practicum.ewm.location.model.Location;
 import ru.practicum.ewm.location.repository.LocationRepository;
+import ru.practicum.ewm.request.model.RequestCount;
 import ru.practicum.ewm.request.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.stats.dto.ViewStatsDto;
 import ru.practicum.ewm.stats.service.StatisticsService;
@@ -38,7 +38,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@Slf4j
 public class EventServiceImpl implements EventPublicService, EventPrivateService, EventAdminService {
 
     private final LocalDateTime epochStart = LocalDateTime.of(1970, 1, 1, 0, 0, 0);
@@ -75,16 +74,14 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
     Получение подробной информации об опубликованном событии по его идентификатору
     */
     @Override
-    @Transactional
     public EventFullDto getEventByPublic(Long eventId, HttpServletRequest request) {
         Event event = findById(eventId);
         //событие должно быть опубликовано
         validatePublicAccess(event);
         //информация о событии должна включать в себя количество подтвержденных запросов
-        event.setConfirmedRequests(countParticipationRequests(eventId, RequestStatus.CONFIRMED));
+        pullConfirmsToEvents(List.of(event));
         //информация о событии должна включать в себя количество просмотров
-        statisticsService.getView(epochStart, epochEnd, request.getRequestURI(), false)
-                .ifPresent(v -> event.setViews(v.getHits()));
+        pullStatsToEvents(List.of(event));
         //информацию о том, что по этому эндпоинту был осуществлен и обработан запрос, нужно сохранить в сервисе статистики
         statisticsService.makeView(request);
         return EventMapper.toEventFullDto(event);
@@ -94,7 +91,6 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
     Получение событий с возможностью фильтрации
     */
     @Override
-    @Transactional
     public List<EventShortDto> getSomeEventsByPublic(
             @Nullable String text,
             @Nullable List<Long> categories,
@@ -113,21 +109,8 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
         //текстовый поиск (по аннотации и подробному описанию) должен быть без учета регистра букв
         //это публичный эндпоинт, соответственно в выдаче должны быть только опубликованные события
         //Вариант сортировки: по дате события
-        log.info(String.format("get some Events by public \n " +
-                        "text: %s \n " +
-                        "categories: %s \n " +
-                        "paid: %s \n " +
-                        "rangeStart: %s \n " +
-                        "rangeEnd: %s \n " +
-                        "onlyAvailable: %s \n " +
-                        "eventSort: %s \n " +
-                        "from: %d \n " +
-                        "size: %d \n ",
-                text, categories, paid, rangeStart, rangeEnd, onlyAvailable, eventSort, from, size));
         List<Event> events = findSortedByEventDate(
-                null, text, categories, paid, rangeStart, rangeEnd, from, size, List.of(EventState.PUBLISHED)
-        );
-        log.info(events.toString());
+                null, text, categories, paid, rangeStart, rangeEnd, from, size, List.of(EventState.PUBLISHED));
         //информация о каждом событии должна включать в себя количество уже одобренных заявок на участие
         pullConfirmsToEvents(events);
         //только события у которых не исчерпан лимит запросов на участие
@@ -146,9 +129,16 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
     }
 
     private void pullConfirmsToEvents(List<Event> events) {
-        events.forEach(e -> e.setConfirmedRequests(
-                countParticipationRequests(e.getId(), RequestStatus.CONFIRMED) == null ?
-                        0L : countParticipationRequests(e.getId(), RequestStatus.CONFIRMED)));
+        Map<Long, Event> eventMap = new HashMap<>();
+        events.forEach(e -> {
+            eventMap.put(e.getId(), e);
+        });
+        List<Long> eventIds = new ArrayList<>(eventMap.keySet());
+        List<RequestCount> counts = countParticipationRequests(eventIds, RequestStatus.CONFIRMED);
+        counts.forEach(c -> {
+            eventMap.get(c.getEventId()).setConfirmedRequests(
+                    c.getParticipationCount() == null ? 0L : c.getParticipationCount());
+        });
     }
 
     private void pullStatsToEvents(List<Event> events) {
@@ -174,7 +164,6 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
     Эндпоинт возвращает полную информацию обо всех событиях подходящих под переданные условия
      */
     @Override
-    @Transactional
     public List<EventFullDto> getEventsByAdmin(List<Long> users,
                                                List<EventState> states,
                                                List<Long> categories,
@@ -187,7 +176,7 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
         if (categories != null) validateCategories(categories);
         List<Event> events =
                 findSortedByEventDate(users, null, categories, null, rangeStart, rangeEnd, from, size, states);
-        events.forEach(e -> e.setConfirmedRequests(countParticipationRequests(e.getId(), RequestStatus.CONFIRMED)));
+        pullConfirmsToEvents(events);
         pullStatsToEvents(events);
         return EventMapper.toEventFullDtoList(events);
     }
@@ -213,6 +202,7 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
     Отклонение события
      */
     @Override
+    @Transactional
     public EventFullDto rejectEventByAdmin(Long eventId) {
         Event event = findById(eventId);
         validateEventForReject(event);
@@ -255,21 +245,17 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
 
     private void validateCategories(List<Long> categories) {
         categories.forEach(id -> {
-            categoryRepository.findById(id).orElseThrow(
-                    () -> {
-                        throw new NotFoundException("Category does not found in specified by admin category id list");
-                    }
-            );
+            if (!categoryRepository.existsById(id)) {
+                throw new NotFoundException("Category does not found in specified by admin category id list");
+            }
         });
     }
 
     private void validateUsers(List<Long> users) {
         users.forEach(id -> {
-            userRepository.findById(id).orElseThrow(
-                    () -> {
-                        throw new NotFoundException("User does not found in specified by admin user id list");
-                    }
-            );
+            if (!userRepository.existsById(id)) {
+                throw new NotFoundException("User does not found in specified by admin user id list");
+            }
         });
     }
 
@@ -281,8 +267,8 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
         if (!event.getState().equals(EventState.PUBLISHED)) throw new ForbiddenException("Access denied");
     }
 
-    private Long countParticipationRequests(Long eventId, RequestStatus requestStatus) {
-        return participationRequestRepository.countByEvent_IdAndStatus(eventId, requestStatus);
+    private List<RequestCount> countParticipationRequests(List<Long> eventIds, RequestStatus requestStatus) {
+        return participationRequestRepository.fetchRequestCountsByEvent_IdAndStatus(eventIds, requestStatus);
     }
 
     private List<Event> findSortedByEventDate(List<Long> users,
@@ -380,14 +366,11 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
     Получение полной информации о событии добавленном текущим пользователем
      */
     @Override
-    @Transactional
     public EventFullDto getEventByUser(Long userId, Long eventId) {
         Event event = findById(eventId);
         validateInitiator(userId, event);
-        event.setConfirmedRequests(countParticipationRequests(event.getId(), RequestStatus.CONFIRMED));
-        statisticsService.getView(epochStart, epochEnd, makeUri(eventId), false)
-                .ifPresent(views -> event.setViews(views.getHits()));
-
+        pullConfirmsToEvents(List.of(event));
+        pullStatsToEvents(List.of(event));
         return EventMapper.toEventFullDto(event);
     }
 
@@ -404,6 +387,7 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
         validateParticipantLimit(event, updateEventRequest.getParticipantLimit());
         updateEventCategory(event, updateEventRequest.getCategory());
         updateEventState(event);
+        pullStatsToEvents(List.of(event));
         EventMapper.matchEvent(event, updateEventRequest);
         event = eventRepository.save(event);
         return EventMapper.toEventFullDto(event);
@@ -414,14 +398,13 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
     Редактирование данных любого события администратором. Валидация данных не требуется.
      */
     @Override
+    @Transactional
     public EventFullDto putEventByAdmin(Long eventId, AdminUpdateEventRequest adminUpdateEventRequest) {
         Event event = findById(eventId);
-        //пропущено validateEventStatusForUpdate();
-        //пропущено validateEventDateForUpdate();
         validateParticipantLimit(event, adminUpdateEventRequest.getParticipantLimit());
         updateEventCategory(event, adminUpdateEventRequest.getCategory());
-        //пропущено updateEventState()
         event.setLocation(findOrCreateLocation(adminUpdateEventRequest.getLocation()));
+        pullStatsToEvents(List.of(event));
         EventMapper.matchEvent(event, adminUpdateEventRequest);
         EventFullDto eventFullDto = EventMapper.toEventFullDto(event);
         eventRepository.save(event);
@@ -438,7 +421,8 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
         validateInitiator(userId, event);
         validateEventStatusForCancel(event);
         event.setState(EventState.CANCELED);
-        event.setConfirmedRequests(countParticipationRequests(eventId, RequestStatus.CONFIRMED));
+        pullConfirmsToEvents(List.of(event));
+        pullStatsToEvents(List.of(event));
         EventFullDto eventFullDto = EventMapper.toEventFullDto(event);
         eventRepository.save(event);
         return eventFullDto;
@@ -468,14 +452,11 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
     }
 
     private void validateParticipantLimit(Event event, Integer updateLimit) {
-        Long confirms = countParticipationRequests(event.getId(), RequestStatus.CONFIRMED);
+        pullConfirmsToEvents(List.of(event));
+        Long confirms = event.getConfirmedRequests();
         if (updateLimit != 0 && updateLimit < confirms.intValue()) {
             throw new BadRequestException("Participation limit exceeds number of confirmed participation requests");
         }
-    }
-
-    private String makeUri(Long eventId) {
-        return new StringBuilder().append(uri).append("/").append(eventId).toString();
     }
 
     private void validateInitiator(Long userId, Event event) {
@@ -499,6 +480,5 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
             throw new BadRequestException("Event cannot be updated before than less 2 hours left for its beginning");
         }
     }
-
 
 }

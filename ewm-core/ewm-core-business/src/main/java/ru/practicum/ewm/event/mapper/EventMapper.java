@@ -76,21 +76,21 @@ public class EventMapper {
     }
 
     public static void matchEvent(Event event, UpdateEventRequest request) {
-        if (request.getAnnotation() != null) event.setAnnotation(request.getAnnotation());
-        if (request.getDescription() != null) event.setDescription(request.getDescription());
-        if (request.getEventDate() != null) event.setEventDate(request.getEventDate());
-        if (request.getPaid() != null) event.setPaid(request.getPaid());
-        if (request.getParticipantLimit() != null) event.setParticipantLimit(request.getParticipantLimit());
-        if (request.getTitle() != null) event.setTitle(request.getTitle());
+        Optional.ofNullable(request.getAnnotation()).ifPresent(event::setAnnotation);
+        Optional.ofNullable(request.getDescription()).ifPresent(event::setDescription);
+        Optional.ofNullable(request.getEventDate()).ifPresent(event::setEventDate);
+        Optional.ofNullable(request.getPaid()).ifPresent(event::setPaid);
+        Optional.ofNullable(request.getParticipantLimit()).ifPresent(event::setParticipantLimit);
+        Optional.ofNullable(request.getTitle()).ifPresent(event::setTitle);
     }
 
     public static void matchEvent(Event event, AdminUpdateEventRequest request) {
-        if (request.getAnnotation() != null) event.setAnnotation(request.getAnnotation());
-        if (request.getDescription() != null) event.setDescription(request.getDescription());
-        if (request.getEventDate() != null) event.setEventDate(request.getEventDate());
-        if (request.getPaid() != null) event.setPaid(request.getPaid());
-        if (request.getParticipantLimit() != null) event.setParticipantLimit(request.getParticipantLimit());
-        if (request.getRequestModeration() != null) event.setRequestModeration(request.getRequestModeration());
-        if (request.getTitle() != null) event.setTitle(request.getTitle());
+        Optional.ofNullable(request.getAnnotation()).ifPresent(event::setAnnotation);
+        Optional.ofNullable(request.getDescription()).ifPresent(event::setDescription);
+        Optional.ofNullable(request.getEventDate()).ifPresent(event::setEventDate);
+        Optional.ofNullable(request.getPaid()).ifPresent(event::setPaid);
+        Optional.ofNullable(request.getParticipantLimit()).ifPresent(event::setParticipantLimit);
+        Optional.ofNullable(request.getRequestModeration()).ifPresent(event::setRequestModeration);
+        Optional.ofNullable(request.getTitle()).ifPresent(event::setTitle);
     }
 }

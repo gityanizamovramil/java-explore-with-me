@@ -23,6 +23,5 @@ public interface EventPublicService {
             @Nullable EventSort sort,
             Integer from,
             Integer size,
-            HttpServletRequest request
-    );
+            HttpServletRequest request);
 }

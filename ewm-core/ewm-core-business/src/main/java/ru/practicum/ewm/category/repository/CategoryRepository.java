@@ -10,6 +10,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     List<Category> findAllBy(PageRequest pageRequest);
 
-    List<Category> findAllByNameIgnoreCase(String name);
+    Boolean existsByNameIgnoreCase(String name);
 
 }

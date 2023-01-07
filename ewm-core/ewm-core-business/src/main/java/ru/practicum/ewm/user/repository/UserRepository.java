@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import ru.practicum.ewm.user.model.User;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -13,5 +12,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByIdIn(List<Long> ids, PageRequest pageRequest);
 
-    Optional<User> findUserByEmailIgnoreCase(String email);
+    Boolean existsByEmailIgnoreCase(String email);
 }
