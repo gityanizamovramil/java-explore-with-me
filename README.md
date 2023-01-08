@@ -15,3 +15,5 @@ https://github.com/gityanizamovramil/java-explore-with-me/pull/2
 
 Requirements.
 
+Basic functionality is done.
+
