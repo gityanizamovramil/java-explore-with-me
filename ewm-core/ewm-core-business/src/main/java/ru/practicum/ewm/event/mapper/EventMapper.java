@@ -93,4 +93,35 @@ public class EventMapper {
         Optional.ofNullable(request.getRequestModeration()).ifPresent(event::setRequestModeration);
         Optional.ofNullable(request.getTitle()).ifPresent(event::setTitle);
     }
+
+    public static EventInfoDto toEventInfoDto(Event event) {
+        return EventInfoDto.builder()
+                .id(event.getId())
+                .annotation(event.getAnnotation())
+                .category(Optional.ofNullable(event.getCategory()).map(CategoryMapper::toCategoryDto).orElse(null))
+                .createdOn(event.getCreatedOn())
+                .description(event.getDescription())
+                .eventDate(event.getEventDate())
+                .initiator(Optional.ofNullable(event.getInitiator()).map(UserMapper::toUserShortDto).orElse(null))
+                .location(Optional.ofNullable(event.getLocation()).map(LocationMapper::toLocationDto).orElse(null))
+                .paid(event.getPaid())
+                .publishedOn(event.getPublishedOn())
+                .requestModeration(event.getRequestModeration())
+                .state(event.getState())
+                .title(event.getTitle())
+                .build();
+    }
+
+    public static EventPreviewDto toEventPreviewDto(Event event) {
+        return EventPreviewDto.builder()
+                .id(event.getId())
+                .annotation(event.getAnnotation())
+                .category(Optional.ofNullable(event.getCategory()).map(CategoryMapper::toCategoryDto).orElse(null))
+                .eventDate(event.getEventDate())
+                .initiator(Optional.ofNullable(event.getInitiator()).map(UserMapper::toUserShortDto).orElse(null))
+                .location(Optional.ofNullable(event.getLocation()).map(LocationMapper::toLocationDto).orElse(null))
+                .paid(event.getPaid())
+                .title(event.getTitle())
+                .build();
+    }
 }
