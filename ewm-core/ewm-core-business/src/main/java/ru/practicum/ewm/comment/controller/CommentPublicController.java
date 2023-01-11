@@ -1,6 +1,5 @@
 package ru.practicum.ewm.comment.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.comment.dto.CommentShortDto;
@@ -16,7 +15,6 @@ import java.util.List;
 @Validated
 public class CommentPublicController {
 
-    @Autowired
     private final CommentPublicService commentPublicService;
 
     public CommentPublicController(CommentPublicService commentPublicService) {

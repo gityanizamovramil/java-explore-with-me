@@ -1,6 +1,5 @@
 package ru.practicum.ewm.comment.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -33,11 +32,10 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
     private final LocalDateTime epochStart = LocalDateTime.of(1970, 1, 1, 0, 0, 0);
     private final LocalDateTime epochEnd = LocalDateTime.of(2100, 12, 31, 23, 59, 59);
 
-    @Autowired
     private final CommentRepository commentRepository;
-    @Autowired
+
     private final UserRepository userRepository;
-    @Autowired
+
     private final EventRepository eventRepository;
 
     public CommentService(CommentRepository commentRepository,
