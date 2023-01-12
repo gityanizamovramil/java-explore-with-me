@@ -5,53 +5,22 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.ewm.category.dto.CategoryDto;
-import ru.practicum.ewm.common.EventState;
 import ru.practicum.ewm.common.LocationDto;
 import ru.practicum.ewm.user.dto.UserShortDto;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class EventFullDto {
-
+public class EventPreviewDto {
     private Long id;
-
-    @NotBlank
     private String annotation;
-
     private CategoryDto category;
-
-    private Long confirmedRequests;
-
-    private LocalDateTime createdOn;
-
-    private String description;
-
     private LocalDateTime eventDate;
-
     private UserShortDto initiator;
-
     private LocationDto location;
-
-    @NotNull
     private Boolean paid;
-
-    @Builder.Default
-    private Integer participantLimit = 0;
-
-    private LocalDateTime publishedOn;
-
-    private Boolean requestModeration;
-
-    private EventState state;
-
-    @NotBlank
     private String title;
-
-    private Long views;
 }
