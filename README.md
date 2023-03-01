@@ -1,3 +1,5 @@
+*currently moved as history (chrono stages)*
+
 ### Дипломная разработка проекта - Афиша мероприятий (с англ. "Explore with me")
 
 <details><summary><b>Краткое описание функционала программы</b></summary>
