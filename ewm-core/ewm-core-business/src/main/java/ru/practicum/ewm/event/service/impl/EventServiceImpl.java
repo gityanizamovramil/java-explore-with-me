@@ -1,5 +1,6 @@
 package ru.practicum.ewm.event.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -38,37 +39,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class EventServiceImpl implements EventPublicService, EventPrivateService, EventAdminService {
 
     private final LocalDateTime epochStart = LocalDateTime.of(1970, 1, 1, 0, 0, 0);
     private final LocalDateTime epochEnd = LocalDateTime.of(2100, 12, 31, 23, 59, 59);
     private final String uri = "/events";
-
-    @Autowired
     private final EventRepository eventRepository;
-    @Autowired
     private final StatisticsService statisticsService;
-    @Autowired
     private final ParticipationRequestRepository participationRequestRepository;
-    @Autowired
     private final CategoryRepository categoryRepository;
-    @Autowired
     private final LocationRepository locationRepository;
-    @Autowired
     private final UserRepository userRepository;
-
-    public EventServiceImpl(EventRepository eventRepository,
-                            StatisticsService statisticsService,
-                            ParticipationRequestRepository participationRequestRepository,
-                            CategoryRepository categoryRepository,
-                            LocationRepository locationRepository, UserRepository userRepository) {
-        this.eventRepository = eventRepository;
-        this.statisticsService = statisticsService;
-        this.participationRequestRepository = participationRequestRepository;
-        this.categoryRepository = categoryRepository;
-        this.locationRepository = locationRepository;
-        this.userRepository = userRepository;
-    }
 
     /*
     Получение подробной информации об опубликованном событии по его идентификатору

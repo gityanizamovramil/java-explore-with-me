@@ -1,5 +1,6 @@
 package ru.practicum.ewm.user.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -16,14 +17,10 @@ import ru.practicum.ewm.user.service.UserAdminService;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserAdminService {
 
-    @Autowired
     private final UserRepository userRepository;
-
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Override
     public List<UserDto> getSome(List<Long> ids, Integer from, Integer size) {

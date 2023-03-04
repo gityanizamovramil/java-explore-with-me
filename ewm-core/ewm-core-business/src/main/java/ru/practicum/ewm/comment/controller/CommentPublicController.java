@@ -1,5 +1,6 @@
 package ru.practicum.ewm.comment.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.comment.dto.CommentShortDto;
@@ -13,13 +14,10 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/events/{eventId}/comments")
 @Validated
+@RequiredArgsConstructor
 public class CommentPublicController {
 
     private final CommentPublicService commentPublicService;
-
-    public CommentPublicController(CommentPublicService commentPublicService) {
-        this.commentPublicService = commentPublicService;
-    }
 
     /*
     Получение опубликованных комментариев к событию

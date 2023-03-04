@@ -1,5 +1,6 @@
 package ru.practicum.ewm.stats.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.practicum.ewm.stats.client.StatsClient;
@@ -15,16 +16,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class StatisticsServiceImpl implements StatisticsService {
 
     private static final String APP_NAME = "ewm-main-service";
-
-    @Autowired
     private final StatsClient statsClient;
-
-    public StatisticsServiceImpl(StatsClient statsClient) {
-        this.statsClient = statsClient;
-    }
 
     @Override
     public void makeView(HttpServletRequest request) {

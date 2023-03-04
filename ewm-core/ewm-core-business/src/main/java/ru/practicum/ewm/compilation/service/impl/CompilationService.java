@@ -1,5 +1,6 @@
 package ru.practicum.ewm.compilation.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -29,29 +30,20 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CompilationService implements CompilationPublicService, CompilationAdminService {
 
     private final LocalDateTime epochStart = LocalDateTime.of(1970, 1, 1, 0, 0, 0);
     private final LocalDateTime epochEnd = LocalDateTime.of(2100, 12, 31, 23, 59, 59);
     private final String uri = "/events";
 
-    @Autowired
     private final CompilationRepository compilationRepository;
-    @Autowired
-    private final ParticipationRequestRepository participationRequestRepository;
-    @Autowired
-    private final StatisticsService statisticsService;
-    @Autowired
-    private final EventRepository eventRepository;
 
-    public CompilationService(CompilationRepository compilationRepository,
-                              ParticipationRequestRepository participationRequestRepository,
-                              StatisticsService statisticsService, EventRepository eventRepository) {
-        this.compilationRepository = compilationRepository;
-        this.participationRequestRepository = participationRequestRepository;
-        this.statisticsService = statisticsService;
-        this.eventRepository = eventRepository;
-    }
+    private final ParticipationRequestRepository participationRequestRepository;
+
+    private final StatisticsService statisticsService;
+
+    private final EventRepository eventRepository;
 
     /*
     Получение подборок событий

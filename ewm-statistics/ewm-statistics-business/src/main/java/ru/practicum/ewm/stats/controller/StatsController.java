@@ -1,5 +1,6 @@
 package ru.practicum.ewm.stats.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,14 +17,10 @@ import java.util.List;
 @RestController
 @Validated
 @Slf4j
+@RequiredArgsConstructor
 public class StatsController {
 
-    @Autowired
     private final EndpointHitService endpointHitService;
-
-    public StatsController(EndpointHitService endpointHitService) {
-        this.endpointHitService = endpointHitService;
-    }
 
     /*
     Сохранение информации о том, что к эндпоинту был запрос

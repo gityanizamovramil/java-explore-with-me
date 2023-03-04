@@ -1,5 +1,6 @@
 package ru.practicum.ewm.comment.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CommentService implements CommentAdminService, CommentPrivateService, CommentPublicService {
 
     private final LocalDateTime epochStart = LocalDateTime.of(1970, 1, 1, 0, 0, 0);
@@ -37,14 +39,6 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
     private final UserRepository userRepository;
 
     private final EventRepository eventRepository;
-
-    public CommentService(CommentRepository commentRepository,
-                          UserRepository userRepository,
-                          EventRepository eventRepository) {
-        this.commentRepository = commentRepository;
-        this.userRepository = userRepository;
-        this.eventRepository = eventRepository;
-    }
 
     /*
     Поиск комментариев

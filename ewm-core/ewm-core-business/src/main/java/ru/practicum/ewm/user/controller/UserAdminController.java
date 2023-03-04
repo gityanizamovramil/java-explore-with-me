@@ -1,5 +1,6 @@
 package ru.practicum.ewm.user.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -16,14 +17,10 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/admin/users")
 @Validated
+@RequiredArgsConstructor
 public class UserAdminController {
 
-    @Autowired
     private final UserAdminService userAdminService;
-
-    public UserAdminController(UserAdminService userAdminService) {
-        this.userAdminService = userAdminService;
-    }
 
     /*
     Получение информации о пользователях

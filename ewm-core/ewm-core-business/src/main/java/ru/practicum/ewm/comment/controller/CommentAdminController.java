@@ -1,5 +1,6 @@
 package ru.practicum.ewm.comment.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.comment.dto.CommentFullDto;
@@ -15,13 +16,10 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/admin/comments")
 @Validated
+@RequiredArgsConstructor
 public class CommentAdminController {
 
     private final CommentAdminService commentAdminService;
-
-    public CommentAdminController(CommentAdminService commentAdminService) {
-        this.commentAdminService = commentAdminService;
-    }
 
     /*
     Поиск комментариев

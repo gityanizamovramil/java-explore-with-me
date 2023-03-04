@@ -1,5 +1,6 @@
 package ru.practicum.ewm.event.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -20,19 +21,12 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/users/{userId}/events")
 @Validated
+@RequiredArgsConstructor
 public class EventPrivateController {
 
-    @Autowired
     private final EventPrivateService eventPrivateService;
 
-    @Autowired
     private final ParticipationRequestPrivateService participationRequestPrivateService;
-
-    public EventPrivateController(EventPrivateService eventPrivateService,
-                                  ParticipationRequestPrivateService participationRequestPrivateService) {
-        this.eventPrivateService = eventPrivateService;
-        this.participationRequestPrivateService = participationRequestPrivateService;
-    }
 
     /*
     Получение событий, добавленных текущим пользователем

@@ -1,5 +1,6 @@
 package ru.practicum.ewm.stats.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.stats.dto.EndpointHitDto;
@@ -14,14 +15,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class EndpointHitServiceImpl implements EndpointHitService {
 
-    @Autowired
     private final EndpointHitRepository endpointHitRepository;
-
-    public EndpointHitServiceImpl(EndpointHitRepository endpointHitRepository) {
-        this.endpointHitRepository = endpointHitRepository;
-    }
 
     @Override
     public EndpointHitDto createHit(EndpointHitDto endpointHitDto) {

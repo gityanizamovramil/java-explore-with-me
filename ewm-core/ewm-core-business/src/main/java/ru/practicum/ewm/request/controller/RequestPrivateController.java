@@ -1,5 +1,6 @@
 package ru.practicum.ewm.request.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -13,14 +14,10 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/users/{userId}/requests")
 @Validated
+@RequiredArgsConstructor
 public class RequestPrivateController {
 
-    @Autowired
     private final ParticipationRequestPrivateService participationRequestPrivateService;
-
-    public RequestPrivateController(ParticipationRequestPrivateService participationRequestPrivateService) {
-        this.participationRequestPrivateService = participationRequestPrivateService;
-    }
 
     /*
     Получение информации о заявках текущего пользователя на участие в чужих событиях

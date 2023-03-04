@@ -1,5 +1,6 @@
 package ru.practicum.ewm.event.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -20,14 +21,10 @@ import java.util.List;
 @RequestMapping(path = "/events")
 @Validated
 @Slf4j
+@RequiredArgsConstructor
 public class EventPublicController {
 
-    @Autowired
     private final EventPublicService eventPublicService;
-
-    public EventPublicController(EventPublicService eventPublicService) {
-        this.eventPublicService = eventPublicService;
-    }
 
     /*
     Получение событий с возможностью фильтрации

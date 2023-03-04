@@ -1,5 +1,6 @@
 package ru.practicum.ewm.comment.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.comment.dto.CommentDto;
@@ -16,13 +17,10 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/users/{userId}/comments")
 @Validated
+@RequiredArgsConstructor
 public class CommentPrivateController {
 
     private final CommentPrivateService commentPrivateService;
-
-    public CommentPrivateController(CommentPrivateService commentPrivateService) {
-        this.commentPrivateService = commentPrivateService;
-    }
 
     /*
     Получение комментариев, добавленных текущим пользователем

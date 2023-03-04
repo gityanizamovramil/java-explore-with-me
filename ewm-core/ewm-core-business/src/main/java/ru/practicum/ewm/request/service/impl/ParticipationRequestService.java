@@ -1,5 +1,6 @@
 package ru.practicum.ewm.request.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.common.EventState;
@@ -20,22 +21,12 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ParticipationRequestService implements ParticipationRequestPrivateService {
 
-    @Autowired
     private final ParticipationRequestRepository participationRequestRepository;
-    @Autowired
     private final EventRepository eventRepository;
-    @Autowired
     private final UserRepository userRepository;
-
-    public ParticipationRequestService(ParticipationRequestRepository participationRequestRepository,
-                                       EventRepository eventRepository,
-                                       UserRepository userRepository) {
-        this.participationRequestRepository = participationRequestRepository;
-        this.eventRepository = eventRepository;
-        this.userRepository = userRepository;
-    }
 
     /*
     Получение информации о запросах на участие в событии текущего пользователя

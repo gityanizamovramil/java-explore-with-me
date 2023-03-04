@@ -1,5 +1,6 @@
 package ru.practicum.ewm.compilation.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -14,14 +15,10 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/compilations")
 @Validated
+@RequiredArgsConstructor
 public class CompilationPublicController {
 
-    @Autowired
     private final CompilationPublicService compilationPublicService;
-
-    public CompilationPublicController(CompilationPublicService compilationPublicService) {
-        this.compilationPublicService = compilationPublicService;
-    }
 
     /*
     Получение подборок событий

@@ -1,5 +1,6 @@
 package ru.practicum.ewm.category.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -14,14 +15,10 @@ import javax.validation.constraints.Positive;
 @RestController
 @RequestMapping(path = "/admin/categories")
 @Validated
+@RequiredArgsConstructor
 public class CategoryAdminController {
 
-    @Autowired
     private final CategoryAdminService categoryAdminService;
-
-    public CategoryAdminController(CategoryAdminService categoryAdminService) {
-        this.categoryAdminService = categoryAdminService;
-    }
 
     /*
     Изменение категории

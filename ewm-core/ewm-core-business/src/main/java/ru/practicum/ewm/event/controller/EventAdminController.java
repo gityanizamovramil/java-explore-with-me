@@ -1,5 +1,6 @@
 package ru.practicum.ewm.event.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +18,10 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/admin/events")
 @Validated
+@RequiredArgsConstructor
 public class EventAdminController {
 
-    @Autowired
     private final EventAdminService eventAdminService;
-
-    public EventAdminController(EventAdminService eventAdminService) {
-        this.eventAdminService = eventAdminService;
-    }
 
     /*
     Поиск событий

@@ -1,5 +1,6 @@
 package ru.practicum.ewm.category.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -14,14 +15,10 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/categories")
 @Validated
+@RequiredArgsConstructor
 public class CategoryPublicController {
 
-    @Autowired
     private final CategoryPublicService categoryPublicService;
-
-    public CategoryPublicController(CategoryPublicService categoryPublicService) {
-        this.categoryPublicService = categoryPublicService;
-    }
 
     /*
     Получение категорий
