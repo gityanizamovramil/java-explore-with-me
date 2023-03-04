@@ -14,7 +14,6 @@ import java.util.Optional;
 
 @Slf4j
 public class BaseClient {
-
     private final RestTemplate rest;
 
     public BaseClient(RestTemplate rest) {
@@ -69,5 +68,4 @@ public class BaseClient {
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
         return headers;
     }
-
 }

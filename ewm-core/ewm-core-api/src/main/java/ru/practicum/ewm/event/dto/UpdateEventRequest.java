@@ -15,25 +15,18 @@ import java.time.LocalDateTime;
 public class UpdateEventRequest {
     @Size(min = 20, max = 2000)
     private String annotation;
-
     @Positive
     private Long category;
-
     @Size(min = 20, max = 7000)
     private String description;
-
     @Future
     private LocalDateTime eventDate;
-
     @NotNull
     @Positive
     private Long eventId;
-
     private Boolean paid;
-
     @PositiveOrZero
     private Integer participantLimit;
-
     @Size(min = 3, max = 120)
     private String title;
 }

@@ -14,21 +14,12 @@ import java.time.LocalDateTime;
 @Builder
 public class AdminUpdateEventRequest {
     private String annotation;
-
     private Long category;
-
     private String description;
-
     private LocalDateTime eventDate;
-
     private LocationDto location;
-
     private Boolean paid;
-
     private Integer participantLimit;
-
     private Boolean requestModeration;
-
     private String title;
-
 }

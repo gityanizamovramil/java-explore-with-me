@@ -5,7 +5,6 @@ import ru.practicum.ewm.request.dto.ParticipationRequestDto;
 import java.util.List;
 
 public interface ParticipationRequestPrivateService {
-
     List<ParticipationRequestDto> getParticipationRequestsByInitiator(Long userId, Long eventId);
 
     List<ParticipationRequestDto> getSomeParticipationRequestsByRequester(Long userId);

@@ -1,7 +1,6 @@
 package ru.practicum.ewm.user.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.user.dto.NewUserRequest;
@@ -19,7 +18,6 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 public class UserAdminController {
-
     private final UserAdminService userAdminService;
 
     /*

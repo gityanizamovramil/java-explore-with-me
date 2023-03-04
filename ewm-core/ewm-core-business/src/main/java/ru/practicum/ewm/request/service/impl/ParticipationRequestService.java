@@ -1,7 +1,6 @@
 package ru.practicum.ewm.request.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.common.EventState;
 import ru.practicum.ewm.common.RequestStatus;
@@ -23,14 +22,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ParticipationRequestService implements ParticipationRequestPrivateService {
-
     private final ParticipationRequestRepository participationRequestRepository;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
 
-    /*
-    Получение информации о запросах на участие в событии текущего пользователя
-     */
     @Override
     public List<ParticipationRequestDto> getParticipationRequestsByInitiator(Long userId, Long eventId) {
         List<ParticipationRequest> requests = participationRequestRepository.findAllByEvent_Id(eventId);
@@ -40,18 +35,12 @@ public class ParticipationRequestService implements ParticipationRequestPrivateS
         return ParticipationRequestMapper.toParticipationRequestDtoList(requests);
     }
 
-    /*
-    Получение информации о заявках текущего пользователя на участие в чужих событиях
-     */
     @Override
     public List<ParticipationRequestDto> getSomeParticipationRequestsByRequester(Long userId) {
         List<ParticipationRequest> requests = participationRequestRepository.findAllByRequester_Id(userId);
         return ParticipationRequestMapper.toParticipationRequestDtoList(requests);
     }
 
-    /*
-    Подтверждение чужой заявки на участие в событии текущего пользователя
-     */
     @Override
     @Transactional
     public ParticipationRequestDto confirmParticipationRequestByInitiator(Long userId, Long eventId, Long reqId) {
@@ -67,9 +56,6 @@ public class ParticipationRequestService implements ParticipationRequestPrivateS
         return ParticipationRequestMapper.toParticipationRequestDto(participationRequest);
     }
 
-    /*
-    Отклонение чужой заявки на участие в событии текущего пользователя
-     */
     @Override
     @Transactional
     public ParticipationRequestDto rejectParticipationRequestByInitiator(Long userId, Long eventId, Long reqId) {
@@ -83,9 +69,6 @@ public class ParticipationRequestService implements ParticipationRequestPrivateS
         return ParticipationRequestMapper.toParticipationRequestDto(participationRequest);
     }
 
-    /*
-    Отмена своего запроса на участие в событии
-     */
     @Override
     @Transactional
     public ParticipationRequestDto cancelParticipationByRequester(Long userId, Long requestId) {
@@ -97,24 +80,15 @@ public class ParticipationRequestService implements ParticipationRequestPrivateS
         return ParticipationRequestMapper.toParticipationRequestDto(participationRequest);
     }
 
-    /*
-    Добавление запроса от текущего пользователя на участие в событии
-    */
     @Override
     @Transactional
     public ParticipationRequestDto requestParticipationByUser(Long userId, Long eventId) {
         Event event = findEventById(eventId);
         User requester = findUserById(userId);
-        //нельзя добавить повторный запрос
         validateRequestRepeating(event, requester);
-        //инициатор события не может добавить запрос на участие в своём событии
         validateRequesterIsNotInitiator(event, requester);
-        //нельзя участвовать в неопубликованном событии
         validateEventIsPublished(event);
-        //если у события достигнут лимит запросов на участие - необходимо вернуть ошибку
         validateConfirms(event);
-        //если для события отключена пре-модерация запросов на участие,
-        //то запрос должен автоматически перейти в состояние подтвержденного
         ParticipationRequest participationRequest =
                 ParticipationRequestMapper.toParticipationRequest(event, requester, RequestStatus.PENDING);
         participationRequest = participationRequestRepository.save(participationRequest);
@@ -163,8 +137,6 @@ public class ParticipationRequestService implements ParticipationRequestPrivateS
     }
 
     private void rejectPendingParticipationRequests(Event event) {
-        //если при подтверждении данной заявки, лимит заявок для события исчерпан,
-        //то все неподтверждённые заявки необходимо отклонить
         if (event.getParticipantLimit().equals(0) || !event.getRequestModeration()) {
             return;
         }
@@ -206,11 +178,9 @@ public class ParticipationRequestService implements ParticipationRequestPrivateS
     }
 
     private void validateConfirms(Event event) {
-        //если для события лимит заявок равен 0 или отключена пре-модерация заявок, то подтверждение заявок не требуется
         if (!event.getRequestModeration() || event.getParticipantLimit().equals(0)) {
             return;
         }
-        //нельзя подтвердить заявку, если уже достигнут лимит по заявкам на данное событие
         Long confirms = participationRequestRepository.countByEvent_IdAndStatus(event.getId(), RequestStatus.CONFIRMED);
         if (confirms >= event.getParticipantLimit()) {
             throw new BadRequestException("Event already out of participant limit");

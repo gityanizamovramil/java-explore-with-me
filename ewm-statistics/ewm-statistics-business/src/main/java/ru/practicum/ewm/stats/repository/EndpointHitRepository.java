@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> {
-
     @Query(value = "SELECT new ru.practicum.ewm.stats.model.ViewStats(hits.app, hits.uri, COUNT(hits.ip)) " +
             "FROM EndpointHit as hits " +
             "WHERE ((:uris) IS NULL OR hits.uri IN (:uris)) " +

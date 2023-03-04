@@ -7,7 +7,10 @@ import ru.practicum.ewm.category.model.Category;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CategoryMapper {
+public final class CategoryMapper {
+    private CategoryMapper() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static CategoryDto toCategoryDto(Category category) {
         return CategoryDto.builder()

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface StatisticsService {
-
     void makeView(HttpServletRequest request);
 
     List<ViewStatsDto> getSomeViews(LocalDateTime rangeStart,

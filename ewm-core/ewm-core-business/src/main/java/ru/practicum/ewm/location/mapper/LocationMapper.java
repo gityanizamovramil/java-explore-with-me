@@ -3,7 +3,10 @@ package ru.practicum.ewm.location.mapper;
 import ru.practicum.ewm.common.LocationDto;
 import ru.practicum.ewm.location.model.Location;
 
-public class LocationMapper {
+public final class LocationMapper {
+    private LocationMapper() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static LocationDto toLocationDto(Location location) {
         return LocationDto.builder()

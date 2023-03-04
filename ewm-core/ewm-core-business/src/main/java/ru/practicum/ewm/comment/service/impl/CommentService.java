@@ -30,20 +30,11 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CommentService implements CommentAdminService, CommentPrivateService, CommentPublicService {
-
     private final LocalDateTime epochStart = LocalDateTime.of(1970, 1, 1, 0, 0, 0);
-    private final LocalDateTime epochEnd = LocalDateTime.of(2100, 12, 31, 23, 59, 59);
-
     private final CommentRepository commentRepository;
-
     private final UserRepository userRepository;
-
     private final EventRepository eventRepository;
 
-    /*
-    Поиск комментариев
-    Эндпоинт возвращает полную информацию обо всех комментариях подходящих под переданные условия.
-     */
     @Override
     public List<CommentFullDto> getCommentsByAdmin(List<Long> users,
                                                    List<CommentState> states,
@@ -53,20 +44,13 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
                                                    LocalDateTime rangeEnd,
                                                    Integer from,
                                                    Integer size) {
-        //Если в запросе не указан диапазон дат [rangeStart-rangeEnd],
-        //то нужно выгружать комментарии, которые созданы до текущей даты и времени
         rangeStart = rangeStart == null ? epochStart : rangeStart;
         rangeEnd = rangeEnd == null ? LocalDateTime.now() : rangeEnd;
-
         if (users != null) validateUsers(users);
         if (states != null) validateCommentStates(states);
         if (events != null) validateEvents(events);
-
-        //Текстовый поиск (по тексту комментария) должен быть без учета регистра букв.
-        //Вариант сортировки: по дате создания комментария.
         List<Comment> comments =
                 findSortedByCreationDateDesc(users, states, events, text, rangeStart, rangeEnd, from, size);
-
         return CommentMapper.toCommentFullDtoList(comments);
     }
 
@@ -113,9 +97,6 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
         return PageRequest.of(from / size, size, sort);
     }
 
-    /*
-    Публикация комментария
-     */
     @Override
     @Transactional
     public CommentFullDto publishCommentByAdmin(Long commentId) {
@@ -139,9 +120,6 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
         );
     }
 
-    /*
-    Отклонение комментария
-     */
     @Override
     @Transactional
     public CommentFullDto rejectCommentByAdmin(Long commentId) {
@@ -150,9 +128,6 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
         return CommentMapper.toCommentFullDto(commentRepository.save(comment));
     }
 
-    /*
-    Получение комментариев, добавленных текущим пользователем
-     */
     @Override
     public List<CommentDto> getSomeCommentsByUser(Long userId, Integer from, Integer size) {
         validateUsers(List.of(userId));
@@ -165,9 +140,6 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
         return commentRepository.findAllByAuthor_Id(userId, pageRequest);
     }
 
-    /*
-    Получение комментария, добавленного текущим пользователем
-     */
     @Override
     public CommentDto getCommentByUser(Long userId, Long commentId) {
         validateUsers(List.of(userId));
@@ -182,9 +154,6 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
         }
     }
 
-    /*
-    Добавление нового комментария
-     */
     @Override
     @Transactional
     public CommentDto postCommentByUser(Long userId, NewCommentDto newCommentDto) {
@@ -211,9 +180,6 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
         );
     }
 
-    /*
-    Изменение комментария добавленного текущим пользователем
-     */
     @Override
     @Transactional
     public CommentDto patchCommentByUser(Long userId, UpdateCommentRequest updateCommentRequest) {
@@ -224,9 +190,6 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
         return CommentMapper.toCommentDto(commentRepository.save(comment));
     }
 
-    /*
-    Удаление комментария добавленного текущим пользователем
-     */
     @Override
     @Transactional
     public void deleteCommentByUser(Long userId, Long commentId) {
@@ -236,9 +199,6 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
         commentRepository.deleteById(commentId);
     }
 
-    /*
-    Получение опубликованных комментариев к событию
-     */
     @Override
     public List<CommentShortDto> getSomeCommentsByPublic(Long eventId, Integer from, Integer size) {
         Event event = findEventById(eventId);
@@ -249,9 +209,6 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
         return CommentMapper.toCommentShortDtoList(comments);
     }
 
-    /*
-    Получение опубликованного комментария по его идентификатору
-     */
     @Override
     public CommentShortDto getCommentByPublic(Long eventId, Long commentId) {
         Comment comment = findById(commentId);

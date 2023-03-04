@@ -9,7 +9,6 @@ import ru.practicum.ewm.request.model.RequestCount;
 import java.util.List;
 
 public interface ParticipationRequestRepository extends JpaRepository<ParticipationRequest, Long> {
-
     Long countByEvent_IdAndStatus(Long eventId, RequestStatus status);
 
     List<ParticipationRequest> findAllByEvent_Id(Long eventId);

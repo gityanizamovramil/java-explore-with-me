@@ -1,7 +1,6 @@
 package ru.practicum.ewm.event.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;
@@ -41,7 +40,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventPublicService, EventPrivateService, EventAdminService {
-
     private final LocalDateTime epochStart = LocalDateTime.of(1970, 1, 1, 0, 0, 0);
     private final LocalDateTime epochEnd = LocalDateTime.of(2100, 12, 31, 23, 59, 59);
     private final String uri = "/events";
@@ -52,26 +50,16 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
     private final LocationRepository locationRepository;
     private final UserRepository userRepository;
 
-    /*
-    Получение подробной информации об опубликованном событии по его идентификатору
-    */
     @Override
     public EventFullDto getEventByPublic(Long eventId, HttpServletRequest request) {
         Event event = findById(eventId);
-        //событие должно быть опубликовано
         validatePublicAccess(event);
-        //информация о событии должна включать в себя количество подтвержденных запросов
         pullConfirmsToEvents(List.of(event));
-        //информация о событии должна включать в себя количество просмотров
         pullStatsToEvents(List.of(event));
-        //информацию о том, что по этому эндпоинту был осуществлен и обработан запрос, нужно сохранить в сервисе статистики
         statisticsService.makeView(request);
         return EventMapper.toEventFullDto(event);
     }
 
-    /*
-    Получение событий с возможностью фильтрации
-    */
     @Override
     public List<EventShortDto> getSomeEventsByPublic(
             @Nullable String text,
@@ -84,24 +72,14 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
             Integer from,
             Integer size,
             HttpServletRequest request) {
-        //если в запросе не указан диапазон дат [rangeStart-rangeEnd],
-        //то нужно выгружать события, которые произойдут позже текущей даты и времени
         rangeStart = rangeStart == null ? LocalDateTime.now() : rangeStart;
         rangeEnd = rangeEnd == null ? epochEnd : rangeEnd;
-        //текстовый поиск (по аннотации и подробному описанию) должен быть без учета регистра букв
-        //это публичный эндпоинт, соответственно в выдаче должны быть только опубликованные события
-        //Вариант сортировки: по дате события
         List<Event> events = findSortedByEventDate(
                 null, text, categories, paid, rangeStart, rangeEnd, from, size, List.of(EventState.PUBLISHED));
-        //информация о каждом событии должна включать в себя количество уже одобренных заявок на участие
         pullConfirmsToEvents(events);
-        //только события у которых не исчерпан лимит запросов на участие
         if (onlyAvailable) events = filterOnlyAvailable(events);
-        //информация о каждом событии должна включать в себя количество просмотров
         pullStatsToEvents(events);
-        //Вариант сортировки: по количеству просмотров
         if (eventSort != null && eventSort.equals(EventSort.VIEWS)) events = sortByViews(events);
-        //информацию о том, что по этому эндпоинту был осуществлен и обработан запрос, нужно сохранить в сервисе статистики
         statisticsService.makeView(request);
         return EventMapper.toEventShortDtoList(events);
     }
@@ -141,10 +119,6 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
                 .collect(Collectors.toList());
     }
 
-    /*
-    Поиск событий
-    Эндпоинт возвращает полную информацию обо всех событиях подходящих под переданные условия
-     */
     @Override
     public List<EventFullDto> getEventsByAdmin(List<Long> users,
                                                List<EventState> states,
@@ -163,9 +137,6 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
         return EventMapper.toEventFullDtoList(events);
     }
 
-    /*
-    Публикация события
-     */
     @Override
     @Transactional
     public EventFullDto publishEventByAdmin(Long eventId) {
@@ -180,9 +151,6 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
         return eventFullDto;
     }
 
-    /*
-    Отклонение события
-     */
     @Override
     @Transactional
     public EventFullDto rejectEventByAdmin(Long eventId) {
@@ -196,20 +164,16 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
         return eventFullDto;
     }
 
-
     private void validateEventForReject(Event event) {
-        //Обратите внимание: событие не должно быть опубликовано.
         if (event.getState().equals(EventState.PUBLISHED)) {
             throw new BadRequestException("Event can not be rejected due to it had been published before.");
         }
     }
 
     private void validateEventForPublish(Event event) {
-        //дата начала события должна быть не ранее чем за час от даты публикации.
         if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(1L))) {
             throw new BadRequestException("Event can not be published less than 1 hour before its date");
         }
-        //событие должно быть в состоянии ожидания публикации
         if (!event.getState().equals(EventState.PENDING)) {
             throw new BadRequestException("Event state for publishing can not be anything than pending");
         }
@@ -265,7 +229,6 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
     ) {
         Sort sort = Sort.by(Sort.Direction.ASC, "eventDate");
         PageRequest pageRequest = PageRequest.of(from / size, size, sort);
-
         return eventRepository.fetchEvents(
                 users,
                 text,
@@ -277,9 +240,6 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
                 pageRequest);
     }
 
-    /*
-    Получение событий, добавленных текущим пользователем
-     */
     @Override
     public List<EventShortDto> getSomeEventsByUser(Long userId, Integer from, Integer size) {
         List<Event> events = findSortedByEventDate(
@@ -290,9 +250,6 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
         return EventMapper.toEventShortDtoList(events);
     }
 
-    /*
-    Добавление нового события.
-     */
     @Override
     @Transactional
     public EventFullDto postEventByUser(Long userId, NewEventDto newEventDto) {
@@ -317,7 +274,6 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
     }
 
     private void validateEventDateForPosting(NewEventDto newEventDto) {
-        //дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента
         LocalDateTime eventDate = newEventDto.getEventDate();
         if (eventDate.isBefore(LocalDateTime.now().plusHours(2L))) throw new BadRequestException("Invalid event date");
     }
@@ -344,9 +300,6 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
         return location;
     }
 
-    /*
-    Получение полной информации о событии добавленном текущим пользователем
-     */
     @Override
     public EventFullDto getEventByUser(Long userId, Long eventId) {
         Event event = findById(eventId);
@@ -356,9 +309,6 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
         return EventMapper.toEventFullDto(event);
     }
 
-    /*
-    Изменение события добавленного текущим пользователем
-     */
     @Override
     @Transactional
     public EventFullDto patchEventByUser(Long userId, UpdateEventRequest updateEventRequest) {
@@ -375,10 +325,6 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
         return EventMapper.toEventFullDto(event);
     }
 
-    /*
-    Редактирование события
-    Редактирование данных любого события администратором. Валидация данных не требуется.
-     */
     @Override
     @Transactional
     public EventFullDto putEventByAdmin(Long eventId, AdminUpdateEventRequest adminUpdateEventRequest) {
@@ -393,9 +339,6 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
         return eventFullDto;
     }
 
-    /*
-    Отмена события добавленного текущим пользователем.
-     */
     @Override
     @Transactional
     public EventFullDto cancelEventByUser(Long userId, Long eventId) {
@@ -411,7 +354,6 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
     }
 
     private void validateEventStatusForCancel(Event event) {
-        //Обратите внимание: Отменить можно только событие в состоянии ожидания модерации.
         if (!event.getState().equals(EventState.PENDING)) {
             throw new BadRequestException("Only event with pending state can be cancelled");
         }
@@ -425,11 +367,9 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
                     });
             event.setCategory(category);
         }
-
     }
 
     private void updateEventState(Event event) {
-        //если редактируется отменённое событие, то оно автоматически переходит в состояние ожидания модерации
         if (event.getState().equals(EventState.CANCELED)) event.setState(EventState.PENDING);
     }
 
@@ -446,14 +386,12 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
     }
 
     private void validateEventStatusForUpdate(Event event) {
-        //изменить можно только отмененные события или события в состоянии ожидания модерации
         if (event.getState().equals(EventState.PUBLISHED)) {
             throw new BadRequestException("Event is already published and not allowed for update");
         }
     }
 
     private void validateEventDateForUpdate(Event event, LocalDateTime update) {
-        //дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента
         if (update != null && update.isBefore(LocalDateTime.now().plusHours(2L))) {
             throw new BadRequestException("New event date cannot be earlier than less 2 hours left for its beginning");
         }
@@ -462,5 +400,4 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
             throw new BadRequestException("Event cannot be updated before than less 2 hours left for its beginning");
         }
     }
-
 }

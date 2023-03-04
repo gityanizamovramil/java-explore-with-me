@@ -17,9 +17,7 @@ import java.time.format.DateTimeFormatter;
 
 @Configuration
 public class EwmStatsAppConfig implements WebMvcConfigurer {
-
     private final String localDateFormat;
-
     private final String localDateTimeFormat;
 
     @Autowired

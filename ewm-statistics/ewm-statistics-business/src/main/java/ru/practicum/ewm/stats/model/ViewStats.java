@@ -11,11 +11,8 @@ import java.util.Objects;
 @AllArgsConstructor
 @Builder
 public class ViewStats {
-
     private String app;
-
     private String uri;
-
     private Long hits;
 
     @Override

@@ -1,7 +1,6 @@
 package ru.practicum.ewm.event.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.event.dto.EventFullDto;
@@ -23,9 +22,7 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 public class EventPrivateController {
-
     private final EventPrivateService eventPrivateService;
-
     private final ParticipationRequestPrivateService participationRequestPrivateService;
 
     /*
@@ -42,6 +39,9 @@ public class EventPrivateController {
 
     /*
     Изменение события добавленного текущим пользователем
+    - если редактируется отменённое событие, то оно автоматически переходит в состояние ожидания модерации
+    - изменить можно только отмененные события или события в состоянии ожидания модерации
+    - дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента
      */
     @PatchMapping
     public EventFullDto patchEventByUser(
@@ -53,6 +53,7 @@ public class EventPrivateController {
 
     /*
     Добавление нового события
+    - дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента
      */
     @PostMapping
     public EventFullDto postEventByUser(
@@ -75,6 +76,7 @@ public class EventPrivateController {
 
     /*
     Отмена события добавленного текущим пользователем.
+    - отменить можно только событие в состоянии ожидания модерации.
      */
     @PatchMapping("/{eventId}")
     public EventFullDto cancelEventByUser(
@@ -97,6 +99,10 @@ public class EventPrivateController {
 
     /*
     Подтверждение чужой заявки на участие в событии текущего пользователя
+    - если для события лимит заявок равен 0 или отключена пре-модерация заявок, то подтверждение заявок не требуется
+    - нельзя подтвердить заявку, если уже достигнут лимит по заявкам на данное событие
+    - если при подтверждении данной заявки, лимит заявок для события исчерпан,
+    то все неподтверждённые заявки необходимо отклонить
      */
     @PatchMapping("/{eventId}/requests/{reqId}/confirm")
     public ParticipationRequestDto confirmParticipationRequestByUser(

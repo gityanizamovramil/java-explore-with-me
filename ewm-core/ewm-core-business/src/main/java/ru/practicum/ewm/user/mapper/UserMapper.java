@@ -8,7 +8,10 @@ import ru.practicum.ewm.user.model.User;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class UserMapper {
+public final class UserMapper {
+    private UserMapper() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static User toUser(NewUserRequest newUserRequest) {
         return User.builder()

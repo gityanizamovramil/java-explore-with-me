@@ -2,7 +2,6 @@ package ru.practicum.ewm.stats.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,13 +18,11 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class StatsController {
-
     private final EndpointHitService endpointHitService;
 
     /*
-    Сохранение информации о том, что к эндпоинту был запрос
     Сохранение информации о том, что на uri конкретного сервиса был отправлен запрос пользователем.
-    Название сервиса, uri и ip пользователя указаны в теле запроса.
+    - название сервиса, uri и ip пользователя указаны в теле запроса
      */
     @PostMapping("/hit")
     @Transactional
@@ -35,7 +32,6 @@ public class StatsController {
 
     /*
     Получение статистики по посещениям.
-    Обратите внимание: значение даты и времени нужно закодировать (например используя java.net.URLEncoder.encode)
      */
     @GetMapping("/stats")
     @Transactional

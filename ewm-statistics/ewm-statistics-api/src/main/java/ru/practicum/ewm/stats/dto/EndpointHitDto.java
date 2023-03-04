@@ -15,33 +15,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class EndpointHitDto {
-
-    /*
-    Идентификатор записи
-     */
     private Long id;
-
-    /*
-    Идентификатор сервиса для которого записывается информация
-     */
     @NotBlank
     private String app;
-
-    /*
-    URI для которого был осуществлен запрос
-     */
     @NotBlank
     private String uri;
-
-    /*
-    IP-адрес пользователя, осуществившего запрос
-     */
     @NotBlank
     private String ip;
-
-    /*
-    Дата и время, когда был совершен запрос к эндпоинту (в формате "yyyy-MM-dd HH:mm:ss")
-     */
     private LocalDateTime timestamp;
 
     @JsonIgnore

@@ -13,10 +13,8 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Builder
 public class UpdateCommentRequest {
-
     @NotNull
     private Long commentId;
-
     @NotBlank
     private String text;
 }

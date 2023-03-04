@@ -21,11 +21,8 @@ import java.time.format.DateTimeFormatter;
 
 @Configuration
 public class EwmCoreAppConfig implements WebMvcConfigurer {
-
     private final String serverUrl;
-
     private final String localDateFormat;
-
     private final String localDateTimeFormat;
 
     public EwmCoreAppConfig(@Value("${ewm-stats-server.url}") String serverUrl,

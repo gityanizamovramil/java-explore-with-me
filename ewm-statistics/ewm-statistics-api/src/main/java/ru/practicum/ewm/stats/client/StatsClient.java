@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 
 
 public class StatsClient extends BaseClient {
-
     public StatsClient(RestTemplate rest) {
         super(rest);
     }
@@ -41,7 +40,6 @@ public class StatsClient extends BaseClient {
                 "end", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(end),
                 "uris", uris.stream().collect(Collectors.joining(",")),
                 "unique", unique);
-
         return exchangeAsList(
                 "/stats?start={start}&end={end}&uris={uris}&unique={unique}",
                 HttpMethod.GET,
@@ -50,6 +48,4 @@ public class StatsClient extends BaseClient {
                 parameters
         );
     }
-
-
 }

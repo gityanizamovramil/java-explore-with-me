@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ExceptionApiHandler {
-
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ApiError> handleBadRequestException(Exception exception) {
         String reason = "For the requested operation the conditions are not met.";
@@ -69,5 +68,4 @@ public class ExceptionApiHandler {
                 .map(StackTraceElement::toString)
                 .collect(Collectors.toList());
     }
-
 }

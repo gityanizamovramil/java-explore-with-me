@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventPublicService {
-
     EventFullDto getEventByPublic(Long eventId, HttpServletRequest request);
 
     List<EventShortDto> getSomeEventsByPublic(

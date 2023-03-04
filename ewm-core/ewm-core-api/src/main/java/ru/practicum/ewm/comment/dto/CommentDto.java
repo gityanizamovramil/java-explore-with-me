@@ -14,12 +14,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class CommentDto {
-
     private Long id;
     private String authorName;
     private LocalDateTime created;
     private EventPreviewDto event;
     private CommentState state;
     private String text;
-
 }

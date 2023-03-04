@@ -1,7 +1,6 @@
 package ru.practicum.ewm.event.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.common.EventState;
@@ -20,11 +19,10 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 public class EventAdminController {
-
     private final EventAdminService eventAdminService;
 
     /*
-    Поиск событий
+    Поиск событий (возвращает полную информацию обо всех событиях подходящих под переданные условия)
      */
     @GetMapping
     public List<EventFullDto> getEventsByAdmin(
@@ -40,7 +38,7 @@ public class EventAdminController {
     }
 
     /*
-    Редактирование события
+    Редактирование любого события администратором. Валидация данных не требуется.
      */
     @PutMapping("/{eventId}")
     public EventFullDto putEventByAdmin(
@@ -52,6 +50,8 @@ public class EventAdminController {
 
     /*
     Публикация события
+    - дата начала события должна быть не ранее чем за час от даты публикации
+    - событие должно быть в состоянии ожидания публикации
      */
     @PatchMapping("/{eventId}/publish")
     public EventFullDto publishEventByAdmin(@PathVariable @NotNull @Positive Long eventId) {
@@ -59,7 +59,7 @@ public class EventAdminController {
     }
 
     /*
-    Отклонение события
+    Отклонение события (отклоняемое событие не должно быть опубликованным ранее)
      */
     @PatchMapping("/{eventId}/reject")
     public EventFullDto rejectEventByAdmin(@PathVariable @NotNull @Positive Long eventId) {

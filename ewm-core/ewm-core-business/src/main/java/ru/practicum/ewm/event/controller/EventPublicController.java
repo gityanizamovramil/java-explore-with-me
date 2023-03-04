@@ -2,7 +2,6 @@ package ru.practicum.ewm.event.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.common.EventSort;
@@ -23,11 +22,19 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class EventPublicController {
-
     private final EventPublicService eventPublicService;
 
     /*
     Получение событий с возможностью фильтрации
+    - если в запросе не указан диапазон дат [rangeStart-rangeEnd],
+    то нужно выгружать события, которые произойдут позже текущей даты и времени
+    - текстовый поиск (по аннотации и подробному описанию) должен быть без учета регистра букв
+    - в выдаче должны быть только опубликованные события
+    - вариант сортировки: по дате события и по количеству просмотров.
+    - информация о каждом событии должна включать в себя количество уже одобренных заявок на участие
+    - только события у которых не исчерпан лимит запросов на участие
+    - информация о каждом событии должна включать в себя количество просмотров
+    - информацию о том, что по этому эндпоинту был осуществлен и обработан запрос, нужно сохранить в сервисе статистики
      */
     @GetMapping
     public List<EventShortDto> getSomeEventsByPublic(
@@ -50,6 +57,10 @@ public class EventPublicController {
 
     /*
     Получение подробной информации об опубликованном событии по его идентификатору
+    - событие должно быть опубликовано
+    - информация о событии должна включать в себя количество подтвержденных запросов
+    - информация о событии должна включать в себя количество просмотров
+    - информацию о том, что по этому эндпоинту был осуществлен и обработан запрос, нужно сохранить в сервисе статистики
      */
     @GetMapping("/{id}")
     public EventFullDto getEventByPublic(@PathVariable @NotNull @Positive Long id, HttpServletRequest request) {

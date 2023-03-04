@@ -11,7 +11,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CompilationMapper {
+public final class CompilationMapper {
+    private CompilationMapper() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static CompilationDto toCompilationDto(Compilation compilation) {
         return CompilationDto.builder()

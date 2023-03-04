@@ -3,7 +3,10 @@ package ru.practicum.ewm.stats.mapper;
 import ru.practicum.ewm.stats.dto.EndpointHitDto;
 import ru.practicum.ewm.stats.model.EndpointHit;
 
-public class EndpointHitMapper {
+public final class EndpointHitMapper {
+    private EndpointHitMapper() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static EndpointHit toEndpointHit(EndpointHitDto endpointHitDto) {
         return EndpointHit.builder()
@@ -24,5 +27,4 @@ public class EndpointHitMapper {
                 .uri(endpointHit.getUri())
                 .build();
     }
-
 }

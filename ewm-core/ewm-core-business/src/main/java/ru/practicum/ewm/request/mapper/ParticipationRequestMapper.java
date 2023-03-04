@@ -10,7 +10,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ParticipationRequestMapper {
+public final class ParticipationRequestMapper {
+    private ParticipationRequestMapper() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static List<ParticipationRequestDto> toParticipationRequestDtoList(
             List<ParticipationRequest> participationRequests

@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventAdminService {
-
     List<EventFullDto> getEventsByAdmin(List<Long> users,
                                         List<EventState> states,
                                         List<Long> categories,

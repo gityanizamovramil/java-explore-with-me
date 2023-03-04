@@ -13,7 +13,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class CommentMapper {
+public final class CommentMapper {
+    private CommentMapper() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static List<CommentFullDto> toCommentFullDtoList(List<Comment> comments) {
         return comments.stream()
                 .map(CommentMapper::toCommentFullDto)

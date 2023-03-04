@@ -1,7 +1,6 @@
 package ru.practicum.ewm.stats.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.stats.dto.EndpointHitDto;
 import ru.practicum.ewm.stats.dto.ViewStatsDto;
@@ -17,7 +16,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class EndpointHitServiceImpl implements EndpointHitService {
-
     private final EndpointHitRepository endpointHitRepository;
 
     @Override
@@ -31,6 +29,4 @@ public class EndpointHitServiceImpl implements EndpointHitService {
         if (unique) ViewStatsMapper.toViewStatsDtoList(endpointHitRepository.fetchByUniqueIp(start, end, uris));
         return ViewStatsMapper.toViewStatsDtoList(endpointHitRepository.fetch(start, end, uris));
     }
-
-
 }

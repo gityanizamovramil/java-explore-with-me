@@ -6,7 +6,10 @@ import ru.practicum.ewm.stats.model.ViewStats;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ViewStatsMapper {
+public final class ViewStatsMapper {
+    private ViewStatsMapper() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static ViewStatsDto toViewStatsDto(ViewStats viewStats) {
         return ViewStatsDto.builder()

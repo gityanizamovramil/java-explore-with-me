@@ -1,7 +1,6 @@
 package ru.practicum.ewm.stats.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.practicum.ewm.stats.client.StatsClient;
 import ru.practicum.ewm.stats.dto.EndpointHitDto;
@@ -18,7 +17,6 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class StatisticsServiceImpl implements StatisticsService {
-
     private static final String APP_NAME = "ewm-main-service";
     private final StatsClient statsClient;
 

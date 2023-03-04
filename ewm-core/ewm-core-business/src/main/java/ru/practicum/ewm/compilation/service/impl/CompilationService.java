@@ -1,7 +1,6 @@
 package ru.practicum.ewm.compilation.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,22 +31,14 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class CompilationService implements CompilationPublicService, CompilationAdminService {
-
     private final LocalDateTime epochStart = LocalDateTime.of(1970, 1, 1, 0, 0, 0);
     private final LocalDateTime epochEnd = LocalDateTime.of(2100, 12, 31, 23, 59, 59);
     private final String uri = "/events";
-
     private final CompilationRepository compilationRepository;
-
     private final ParticipationRequestRepository participationRequestRepository;
-
     private final StatisticsService statisticsService;
-
     private final EventRepository eventRepository;
 
-    /*
-    Получение подборок событий
-     */
     @Override
     public List<CompilationDto> getSomeCompilationsByPublic(Boolean pinned, Integer from, Integer size) {
         PageRequest pageRequest = PageRequest.of(from / size, size);
@@ -60,9 +51,6 @@ public class CompilationService implements CompilationPublicService, Compilation
         return CompilationMapper.toCompilationDtoList(compilations);
     }
 
-    /*
-    Получение подборки событий по его id
-     */
     @Override
     public CompilationDto getCompilationByPublic(Long compId) {
         Compilation compilation = findById(compId);
@@ -72,9 +60,6 @@ public class CompilationService implements CompilationPublicService, Compilation
         return CompilationMapper.toCompilationDto(compilation);
     }
 
-    /*
-    Добавление новой подборки
-     */
     @Override
     @Transactional
     public CompilationDto postCompilationByAdmin(NewCompilationDto newCompilationDto) {
@@ -87,9 +72,6 @@ public class CompilationService implements CompilationPublicService, Compilation
         return CompilationMapper.toCompilationDto(compilation);
     }
 
-    /*
-    Удаление подборки
-     */
     @Override
     @Transactional
     public void deleteCompilationByAdmin(Long compId) {
@@ -103,9 +85,6 @@ public class CompilationService implements CompilationPublicService, Compilation
         }
     }
 
-    /*
-    Удалить событие из подборки
-     */
     @Override
     @Transactional
     public void deleteEventFromCompilationByAdmin(Long compId, Long eventId) {
@@ -115,9 +94,6 @@ public class CompilationService implements CompilationPublicService, Compilation
         compilationRepository.save(compilation);
     }
 
-    /*
-    Открепить подборку на главной странице
-     */
     @Override
     @Transactional
     public void unpinCompilationByAdmin(Long compId) {
@@ -126,9 +102,6 @@ public class CompilationService implements CompilationPublicService, Compilation
         compilationRepository.save(compilation);
     }
 
-    /*
-    Закрепить подборку на главной странице
-     */
     @Override
     @Transactional
     public void pinCompilationByAdmin(Long compId) {
@@ -137,9 +110,6 @@ public class CompilationService implements CompilationPublicService, Compilation
         compilationRepository.save(compilation);
     }
 
-    /*
-    Добавить событие в подборку
-     */
     @Override
     @Transactional
     public void addEventToCompilationByAdmin(Long compId, Long eventId) {

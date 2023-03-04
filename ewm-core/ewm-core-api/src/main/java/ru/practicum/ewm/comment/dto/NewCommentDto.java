@@ -13,10 +13,8 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Builder
 public class NewCommentDto {
-
     @NotNull
     private Long eventId;
-
     @NotBlank
     private String text;
 }

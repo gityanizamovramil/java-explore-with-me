@@ -1,7 +1,6 @@
 package ru.practicum.ewm.category.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.category.dto.CategoryDto;
@@ -35,9 +34,7 @@ public class CategoryPublicController {
     Получение информации о категории по её идентификатору
      */
     @GetMapping("/{catId}")
-    public CategoryDto getCategoryByPublic(
-            @PathVariable @NotNull @Positive Long catId
-    ) {
+    public CategoryDto getCategoryByPublic(@PathVariable @NotNull @Positive Long catId) {
         return categoryPublicService.getById(catId);
     }
 }

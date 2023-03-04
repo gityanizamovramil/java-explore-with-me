@@ -18,26 +18,20 @@ import java.util.Objects;
 @AllArgsConstructor
 @Builder
 public class Comment {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @ManyToOne
     @JoinColumn(name = "author_id")
     private User author;
-
     @Column(name = "created")
     private LocalDateTime created;
-
     @ManyToOne
     @JoinColumn(name = "event_id")
     private Event event;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "state")
     private CommentState state = CommentState.PENDING;
-
     @Column(name = "text")
     private String text;
 

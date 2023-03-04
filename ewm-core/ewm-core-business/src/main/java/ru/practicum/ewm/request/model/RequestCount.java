@@ -10,10 +10,7 @@ import ru.practicum.ewm.common.RequestStatus;
 @AllArgsConstructor
 @Builder
 public class RequestCount {
-
     private Long eventId;
-
     private Long participationCount;
-
     private RequestStatus status;
 }

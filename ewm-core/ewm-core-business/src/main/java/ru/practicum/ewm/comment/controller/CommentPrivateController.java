@@ -19,7 +19,6 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 public class CommentPrivateController {
-
     private final CommentPrivateService commentPrivateService;
 
     /*
