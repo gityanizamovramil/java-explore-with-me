@@ -7,7 +7,6 @@ import ru.practicum.ewm.comment.dto.UpdateCommentRequest;
 import java.util.List;
 
 public interface CommentPrivateService {
-
     List<CommentDto> getSomeCommentsByUser(Long userId, Integer from, Integer size);
 
     CommentDto getCommentByUser(Long userId, Long commentId);

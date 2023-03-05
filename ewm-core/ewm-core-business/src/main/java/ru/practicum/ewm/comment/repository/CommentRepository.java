@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-
     @Query("SELECT c FROM Comment AS c " +
             "WHERE ((:users) IS NULL OR c.author.id IN (:users)) " +
             "AND ((:states) IS NULL OR c.state IN (:states)) " +
@@ -29,7 +28,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             @Param("rangeEnd") LocalDateTime rangeEnd,
             PageRequest pageRequest);
 
-    List<Comment> findAllByAuthor_Id(Long authorId, PageRequest pageRequest);
+    List<Comment> findAllByAuthorId(Long authorId, PageRequest pageRequest);
 
-    List<Comment> findAllByEvent_IdAndState(Long eventId, CommentState state, PageRequest pageRequest);
+    List<Comment> findAllByEventIdAndState(Long eventId, CommentState state, PageRequest pageRequest);
 }

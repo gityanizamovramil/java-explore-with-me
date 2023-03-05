@@ -17,5 +17,4 @@ public interface EventPrivateService {
     EventFullDto patchEventByUser(Long userId, UpdateEventRequest updateEventRequest);
 
     EventFullDto cancelEventByUser(Long userId, Long eventId);
-
 }

@@ -37,7 +37,7 @@ public class BaseClient {
             log.info(Arrays.toString(e.getStackTrace()));
             return Optional.empty();
         }
-        log.info(responseEntity.getBody().toString());
+        log.info(String.join(": ", "ResponseBody", String.valueOf(responseEntity.getBody())));
         return Optional.ofNullable(responseEntity.getBody());
     }
 
@@ -58,7 +58,7 @@ public class BaseClient {
             log.info(Arrays.toString(e.getStackTrace()));
             return Optional.empty();
         }
-        log.info(responseEntity.getBody().toString());
+        log.info(String.join(": ", "ResponseBody", String.valueOf(responseEntity.getBody())));
         return Optional.ofNullable(responseEntity.getBody());
     }
 

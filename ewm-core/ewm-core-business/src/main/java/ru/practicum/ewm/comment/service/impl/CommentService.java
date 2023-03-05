@@ -137,7 +137,7 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
 
     private List<Comment> findCommentsByAuthorId(Long userId, Integer from, Integer size) {
         PageRequest pageRequest = formPageSortedByCreationDateDesc(from, size);
-        return commentRepository.findAllByAuthor_Id(userId, pageRequest);
+        return commentRepository.findAllByAuthorId(userId, pageRequest);
     }
 
     @Override
@@ -205,7 +205,7 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
         validateEventIsPublished(event);
         PageRequest pageRequest = formPageSortedByCreationDateDesc(from, size);
         List<Comment> comments =
-                commentRepository.findAllByEvent_IdAndState(eventId, CommentState.CONFIRMED, pageRequest);
+                commentRepository.findAllByEventIdAndState(eventId, CommentState.CONFIRMED, pageRequest);
         return CommentMapper.toCommentShortDtoList(comments);
     }
 

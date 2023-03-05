@@ -28,16 +28,14 @@ public class ParticipationRequestService implements ParticipationRequestPrivateS
 
     @Override
     public List<ParticipationRequestDto> getParticipationRequestsByInitiator(Long userId, Long eventId) {
-        List<ParticipationRequest> requests = participationRequestRepository.findAllByEvent_Id(eventId);
-        requests.forEach(r -> {
-            validateInitiatorId(r.getEvent().getInitiator(), userId);
-        });
+        List<ParticipationRequest> requests = participationRequestRepository.findAllByEventId(eventId);
+        requests.forEach(r -> validateInitiatorId(r.getEvent().getInitiator(), userId));
         return ParticipationRequestMapper.toParticipationRequestDtoList(requests);
     }
 
     @Override
     public List<ParticipationRequestDto> getSomeParticipationRequestsByRequester(Long userId) {
-        List<ParticipationRequest> requests = participationRequestRepository.findAllByRequester_Id(userId);
+        List<ParticipationRequest> requests = participationRequestRepository.findAllByRequesterId(userId);
         return ParticipationRequestMapper.toParticipationRequestDtoList(requests);
     }
 
@@ -102,7 +100,7 @@ public class ParticipationRequestService implements ParticipationRequestPrivateS
     }
 
     private void validateRequestRepeating(Event event, User requester) {
-        if (participationRequestRepository.existsByRequester_IdAndEvent_Id(requester.getId(), event.getId()))
+        if (participationRequestRepository.existsByRequesterIdAndEventId(requester.getId(), event.getId()))
             throw new BadRequestException("Participation request for the event is already created before by user");
     }
 
@@ -137,16 +135,14 @@ public class ParticipationRequestService implements ParticipationRequestPrivateS
     }
 
     private void rejectPendingParticipationRequests(Event event) {
-        if (event.getParticipantLimit().equals(0) || !event.getRequestModeration()) {
+        if (event.getParticipantLimit().equals(0) || Boolean.TRUE.equals(!event.getRequestModeration())) {
             return;
         }
-        Long confirms = participationRequestRepository.countByEvent_IdAndStatus(event.getId(), RequestStatus.CONFIRMED);
+        Long confirms = participationRequestRepository.countByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED);
         if (confirms >= event.getParticipantLimit()) {
             List<ParticipationRequest> participationRequests =
-                    participationRequestRepository.findAllByEvent_IdAndStatus(event.getId(), RequestStatus.PENDING);
-            participationRequests.forEach(p -> {
-                p.setStatus(RequestStatus.REJECTED);
-            });
+                    participationRequestRepository.findAllByEventIdAndStatus(event.getId(), RequestStatus.PENDING);
+            participationRequests.forEach(p -> p.setStatus(RequestStatus.REJECTED));
             participationRequestRepository.saveAll(participationRequests);
         }
     }
@@ -178,10 +174,10 @@ public class ParticipationRequestService implements ParticipationRequestPrivateS
     }
 
     private void validateConfirms(Event event) {
-        if (!event.getRequestModeration() || event.getParticipantLimit().equals(0)) {
+        if (Boolean.TRUE.equals(!event.getRequestModeration()) || event.getParticipantLimit().equals(0)) {
             return;
         }
-        Long confirms = participationRequestRepository.countByEvent_IdAndStatus(event.getId(), RequestStatus.CONFIRMED);
+        Long confirms = participationRequestRepository.countByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED);
         if (confirms >= event.getParticipantLimit()) {
             throw new BadRequestException("Event already out of participant limit");
         }

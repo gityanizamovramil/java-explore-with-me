@@ -9,15 +9,15 @@ import ru.practicum.ewm.request.model.RequestCount;
 import java.util.List;
 
 public interface ParticipationRequestRepository extends JpaRepository<ParticipationRequest, Long> {
-    Long countByEvent_IdAndStatus(Long eventId, RequestStatus status);
+    Long countByEventIdAndStatus(Long eventId, RequestStatus status);
 
-    List<ParticipationRequest> findAllByEvent_Id(Long eventId);
+    List<ParticipationRequest> findAllByEventId(Long eventId);
 
-    List<ParticipationRequest> findAllByRequester_Id(Long requesterId);
+    List<ParticipationRequest> findAllByRequesterId(Long requesterId);
 
-    Boolean existsByRequester_IdAndEvent_Id(Long requesterId, Long eventId);
+    Boolean existsByRequesterIdAndEventId(Long requesterId, Long eventId);
 
-    List<ParticipationRequest> findAllByEvent_IdAndStatus(Long eventId, RequestStatus status);
+    List<ParticipationRequest> findAllByEventIdAndStatus(Long eventId, RequestStatus status);
 
     @Query("SELECT new ru.practicum.ewm.request.model.RequestCount(" +
             "r.event.id, COUNT(r.event.id), r.status) " +
@@ -25,5 +25,5 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
             "WHERE ((:eventIds) IS NULL OR r.event.id IN (:eventIds)) " +
             "AND (r.status = :status) " +
             "GROUP BY r.id")
-    List<RequestCount> fetchRequestCountsByEvent_IdAndStatus(List<Long> eventIds, RequestStatus status);
+    List<RequestCount> fetchRequestCountsByEventIdAndStatus(List<Long> eventIds, RequestStatus status);
 }

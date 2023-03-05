@@ -16,11 +16,10 @@ import javax.validation.constraints.Positive;
 @Validated
 @RequiredArgsConstructor
 public class CategoryAdminController {
-
     private final CategoryAdminService categoryAdminService;
 
     /*
-    Изменение категории (имя категории должно быть уникальным)
+    Изменение категории (имя категории уникально)
      */
     @PatchMapping
     public CategoryDto patchCategoryByAdmin(@RequestBody @Valid CategoryDto categoryDto) {
@@ -28,7 +27,7 @@ public class CategoryAdminController {
     }
 
     /*
-    Добавление новой категории (имя категории должно быть уникальным)
+    Добавление новой категории (имя категории уникально)
      */
     @PostMapping
     public CategoryDto postCategoryByAdmin(@RequestBody @Valid NewCategoryDto newCategoryDto) {
@@ -36,7 +35,7 @@ public class CategoryAdminController {
     }
 
     /*
-    Удаление категории (с категорией не должно быть связано ни одного события)
+    Удаление категории (при условии, что с категорией не связано ни одного события)
      */
     @DeleteMapping("/{catId}")
     public void deleteCategoryByAdmin(@PathVariable @NotNull @Positive Long catId) {

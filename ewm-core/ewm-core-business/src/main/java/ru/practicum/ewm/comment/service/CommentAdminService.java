@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CommentAdminService {
-
     List<CommentFullDto> getCommentsByAdmin(List<Long> users,
                                             List<CommentState> states,
                                             List<Long> events,

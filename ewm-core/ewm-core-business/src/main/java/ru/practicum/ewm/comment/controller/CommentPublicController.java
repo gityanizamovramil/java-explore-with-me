@@ -16,7 +16,6 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 public class CommentPublicController {
-
     private final CommentPublicService commentPublicService;
 
     /*

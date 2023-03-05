@@ -16,7 +16,6 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 public class CompilationPublicController {
-
     private final CompilationPublicService compilationPublicService;
 
     /*
@@ -35,9 +34,7 @@ public class CompilationPublicController {
     Получение подборки событий по его id
      */
     @GetMapping("/{compId}")
-    public CompilationDto getCompilationByPublic(
-            @PathVariable @NotNull @Positive Long compId
-    ) {
+    public CompilationDto getCompilationByPublic(@PathVariable @NotNull @Positive Long compId) {
         return compilationPublicService.getCompilationByPublic(compId);
     }
 }

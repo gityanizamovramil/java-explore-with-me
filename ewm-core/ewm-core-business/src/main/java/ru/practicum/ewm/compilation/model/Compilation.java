@@ -17,11 +17,9 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 public class Compilation {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @ManyToMany(
             cascade = {
                     CascadeType.DETACH,
@@ -38,10 +36,8 @@ public class Compilation {
             inverseForeignKey = @ForeignKey(ConstraintMode.CONSTRAINT)
     )
     private Set<Event> events = new HashSet<>();
-
     @Column(name = "pinned")
     private Boolean pinned;
-
     @Column(name = "title")
     private String title;
 

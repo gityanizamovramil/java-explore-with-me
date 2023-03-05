@@ -49,7 +49,7 @@ public class UserService implements UserAdminService {
     }
 
     private void validateUserEmail(String email) {
-        if (userRepository.existsByEmailIgnoreCase(email)) {
+        if (Boolean.TRUE.equals(userRepository.existsByEmailIgnoreCase(email))) {
             throw new ConflictException("The email of user is already in use.");
         }
     }

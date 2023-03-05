@@ -46,8 +46,10 @@ public class CompilationService implements CompilationPublicService, Compilation
         compilations.stream()
                 .map(Compilation::getEvents)
                 .map(ArrayList::new)
-                .peek(this::pullConfirmsToEvents)
-                .forEach(this::pullStatsToEvents);
+                .forEach(events -> {
+                    pullConfirmsToEvents(events);
+                    pullStatsToEvents(events);
+                });
         return CompilationMapper.toCompilationDtoList(compilations);
     }
 
@@ -163,29 +165,21 @@ public class CompilationService implements CompilationPublicService, Compilation
 
     private void pullStatsToEvents(List<Event> events) {
         Map<Long, Event> eventMap = new HashMap<>();
-        events.forEach(e -> {
-            eventMap.put(e.getId(), e);
-        });
+        events.forEach(e -> eventMap.put(e.getId(), e));
         List<Long> eventIds = new ArrayList<>(eventMap.keySet());
         List<ViewStatsDto> views = statisticsService.getSomeViews(epochStart, epochEnd, eventIds, uri, false);
-        views.forEach(v -> {
-            eventMap.get(v.getIdFromUri()).setViews(v.getHits());
-        });
+        views.forEach(v -> eventMap.get(v.getIdFromUri()).setViews(v.getHits()));
     }
 
     private void pullConfirmsToEvents(List<Event> events) {
         Map<Long, Event> eventMap = new HashMap<>();
-        events.forEach(e -> {
-            eventMap.put(e.getId(), e);
-        });
+        events.forEach(e -> eventMap.put(e.getId(), e));
         List<Long> eventIds = new ArrayList<>(eventMap.keySet());
         List<RequestCount> counts = countParticipationRequests(eventIds, RequestStatus.CONFIRMED);
-        counts.forEach(c -> {
-            eventMap.get(c.getEventId()).setConfirmedRequests(c.getParticipationCount());
-        });
+        counts.forEach(c -> eventMap.get(c.getEventId()).setConfirmedRequests(c.getParticipationCount()));
     }
 
     private List<RequestCount> countParticipationRequests(List<Long> eventIds, RequestStatus requestStatus) {
-        return participationRequestRepository.fetchRequestCountsByEvent_IdAndStatus(eventIds, requestStatus);
+        return participationRequestRepository.fetchRequestCountsByEventIdAndStatus(eventIds, requestStatus);
     }
 }

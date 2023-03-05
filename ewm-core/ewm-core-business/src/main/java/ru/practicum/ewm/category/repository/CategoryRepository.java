@@ -7,7 +7,6 @@ import ru.practicum.ewm.category.model.Category;
 import java.util.List;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-
     List<Category> findAllBy(PageRequest pageRequest);
 
     Boolean existsByNameIgnoreCase(String name);

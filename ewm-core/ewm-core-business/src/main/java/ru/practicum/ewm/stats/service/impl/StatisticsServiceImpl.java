@@ -33,8 +33,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                                            Boolean unique) {
         List<String> uris = getUriList(idList, uri);
         Optional<List<ViewStatsDto>> viewsListOptional = statsClient.getViewStats(rangeStart, rangeEnd, uris, unique);
-        if (viewsListOptional.isEmpty()) return Collections.emptyList();
-        return viewsListOptional.get();
+        return viewsListOptional.orElse(Collections.emptyList());
     }
 
     @Override

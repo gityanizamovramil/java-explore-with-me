@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-
 public class StatsClient extends BaseClient {
     public StatsClient(RestTemplate rest) {
         super(rest);

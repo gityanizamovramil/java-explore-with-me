@@ -77,7 +77,7 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
         List<Event> events = findSortedByEventDate(
                 null, text, categories, paid, rangeStart, rangeEnd, from, size, List.of(EventState.PUBLISHED));
         pullConfirmsToEvents(events);
-        if (onlyAvailable) events = filterOnlyAvailable(events);
+        if (Boolean.TRUE.equals(onlyAvailable)) events = filterOnlyAvailable(events);
         pullStatsToEvents(events);
         if (eventSort != null && eventSort.equals(EventSort.VIEWS)) events = sortByViews(events);
         statisticsService.makeView(request);
@@ -90,27 +90,19 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
 
     private void pullConfirmsToEvents(List<Event> events) {
         Map<Long, Event> eventMap = new HashMap<>();
-        events.forEach(e -> {
-            eventMap.put(e.getId(), e);
-        });
+        events.forEach(e -> eventMap.put(e.getId(), e));
         List<Long> eventIds = new ArrayList<>(eventMap.keySet());
         List<RequestCount> counts = countParticipationRequests(eventIds, RequestStatus.CONFIRMED);
-        counts.forEach(c -> {
-            eventMap.get(c.getEventId()).setConfirmedRequests(
-                    c.getParticipationCount() == null ? 0L : c.getParticipationCount());
-        });
+        counts.forEach(c -> eventMap.get(c.getEventId()).setConfirmedRequests(
+                c.getParticipationCount() == null ? 0L : c.getParticipationCount()));
     }
 
     private void pullStatsToEvents(List<Event> events) {
         Map<Long, Event> eventMap = new HashMap<>();
-        events.forEach(e -> {
-            eventMap.put(e.getId(), e);
-        });
+        events.forEach(e -> eventMap.put(e.getId(), e));
         List<Long> eventIds = new ArrayList<>(eventMap.keySet());
         List<ViewStatsDto> views = statisticsService.getSomeViews(epochStart, epochEnd, eventIds, uri, false);
-        views.forEach(v -> {
-            eventMap.get(v.getIdFromUri()).setViews(v.getHits() == null ? 0L : v.getHits());
-        });
+        views.forEach(v -> eventMap.get(v.getIdFromUri()).setViews(v.getHits() == null ? 0L : v.getHits()));
     }
 
     private List<Event> filterOnlyAvailable(List<Event> events) {
@@ -214,7 +206,7 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
     }
 
     private List<RequestCount> countParticipationRequests(List<Long> eventIds, RequestStatus requestStatus) {
-        return participationRequestRepository.fetchRequestCountsByEvent_IdAndStatus(eventIds, requestStatus);
+        return participationRequestRepository.fetchRequestCountsByEventIdAndStatus(eventIds, requestStatus);
     }
 
     private List<Event> findSortedByEventDate(List<Long> users,

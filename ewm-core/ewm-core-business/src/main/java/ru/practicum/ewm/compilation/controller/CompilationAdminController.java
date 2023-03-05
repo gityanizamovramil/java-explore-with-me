@@ -22,9 +22,7 @@ public class CompilationAdminController {
     Добавление новой подборки
      */
     @PostMapping
-    public CompilationDto postCompilationByAdmin(
-            @RequestBody @Valid NewCompilationDto newCompilationDto
-    ) {
+    public CompilationDto postCompilationByAdmin(@RequestBody @Valid NewCompilationDto newCompilationDto) {
         return compilationAdminService.postCompilationByAdmin(newCompilationDto);
     }
 
@@ -32,9 +30,7 @@ public class CompilationAdminController {
     Удаление подборки
      */
     @DeleteMapping("/{compId}")
-    public void deleteCompilationByAdmin(
-            @PathVariable @NotNull @Positive Long compId
-    ) {
+    public void deleteCompilationByAdmin(@PathVariable @NotNull @Positive Long compId) {
         compilationAdminService.deleteCompilationByAdmin(compId);
     }
 
@@ -64,9 +60,7 @@ public class CompilationAdminController {
     Открепить подборку на главной странице
      */
     @DeleteMapping("/{compId}/pin")
-    public void unpinCompilationByAdmin(
-            @PathVariable @NotNull @Positive Long compId
-    ) {
+    public void unpinCompilationByAdmin(@PathVariable @NotNull @Positive Long compId) {
         compilationAdminService.unpinCompilationByAdmin(compId);
     }
 
@@ -74,9 +68,7 @@ public class CompilationAdminController {
     Закрепить подборку на главной странице
      */
     @PatchMapping("/{compId}/pin")
-    public void pinCompilationByAdmin(
-            @PathVariable @NotNull @Positive Long compId
-    ) {
+    public void pinCompilationByAdmin(@PathVariable @NotNull @Positive Long compId) {
         compilationAdminService.pinCompilationByAdmin(compId);
     }
 }

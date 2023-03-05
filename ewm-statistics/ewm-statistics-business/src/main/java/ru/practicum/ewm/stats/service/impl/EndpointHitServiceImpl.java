@@ -26,7 +26,9 @@ public class EndpointHitServiceImpl implements EndpointHitService {
 
     @Override
     public List<ViewStatsDto> getViewStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-        if (unique) ViewStatsMapper.toViewStatsDtoList(endpointHitRepository.fetchByUniqueIp(start, end, uris));
+        if (Boolean.TRUE.equals(unique)) {
+            ViewStatsMapper.toViewStatsDtoList(endpointHitRepository.fetchByUniqueIp(start, end, uris));
+        }
         return ViewStatsMapper.toViewStatsDtoList(endpointHitRepository.fetch(start, end, uris));
     }
 }

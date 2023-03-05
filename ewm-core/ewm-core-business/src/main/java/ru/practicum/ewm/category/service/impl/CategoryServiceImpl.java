@@ -19,7 +19,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryPublicService, CategoryAdminService {
-
     private final CategoryRepository categoryRepository;
 
     @Override
@@ -63,7 +62,7 @@ public class CategoryServiceImpl implements CategoryPublicService, CategoryAdmin
     }
 
     private void validateCategoryName(String name) {
-        if (categoryRepository.existsByNameIgnoreCase(name)) {
+        if (Boolean.TRUE.equals(categoryRepository.existsByNameIgnoreCase(name))) {
             throw new ConflictException("The name of category is already in use.");
         }
     }

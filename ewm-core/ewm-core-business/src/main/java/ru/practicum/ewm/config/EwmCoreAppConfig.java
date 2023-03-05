@@ -61,5 +61,4 @@ public class EwmCoreAppConfig implements WebMvcConfigurer {
         registrar.setDateTimeFormatter(DateTimeFormatter.ofPattern(localDateTimeFormat));
         registrar.registerFormatters(registry);
     }
-
 }

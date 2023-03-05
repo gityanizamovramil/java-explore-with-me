@@ -45,7 +45,7 @@ public class CommentPrivateController {
     }
 
     /*
-    Добавление нового комментария
+    Добавление нового комментария текущим пользователем
      */
     @PostMapping
     public CommentDto postCommentByUser(
@@ -56,7 +56,7 @@ public class CommentPrivateController {
     }
 
     /*
-    Изменение комментария добавленного текущим пользователем
+    Изменение комментария, добавленного текущим пользователем
      */
     @PatchMapping
     public CommentDto patchCommentByUser(
@@ -67,7 +67,7 @@ public class CommentPrivateController {
     }
 
     /*
-    Удаление комментария добавленного текущим пользователем
+    Удаление комментария, добавленного текущим пользователем
      */
     @DeleteMapping("/{commentId}")
     public void deleteCommentByUser(
