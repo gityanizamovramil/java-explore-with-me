@@ -183,8 +183,7 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
 
     private void validateEventStates(List<EventState> states) {
         states.forEach(s -> {
-            List<EventState> values = Arrays.asList(EventState.values());
-            if (!values.contains(s)) {
+            if (!EventState.contains(s)) {
                 throw new ObjectNotFoundException("Event state that specified by admin in his list does not exist");
             }
         });
