@@ -43,8 +43,12 @@ public class StatisticsServiceImpl implements StatisticsService {
                                           Boolean unique) {
         Optional<List<ViewStatsDto>> viewsListOptional =
                 statsClient.getViewStats(rangeStart, rangeEnd, List.of(uri), unique);
-        if (viewsListOptional.isEmpty()) return Optional.empty();
-        if (viewsListOptional.get().isEmpty()) return Optional.empty();
+        if (viewsListOptional.isEmpty()) {
+            return Optional.empty();
+        }
+        if (viewsListOptional.get().isEmpty()) {
+            return Optional.empty();
+        }
         return Optional.ofNullable(viewsListOptional.get().get(0));
     }
 

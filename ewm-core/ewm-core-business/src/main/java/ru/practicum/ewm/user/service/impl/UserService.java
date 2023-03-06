@@ -23,7 +23,9 @@ public class UserService implements UserAdminService {
     @Override
     public List<UserDto> getSome(List<Long> ids, Integer from, Integer size) {
         PageRequest pageRequest = PageRequest.of(from / size, size);
-        if (ids == null || ids.isEmpty()) return UserMapper.toUserDtoList(userRepository.findAllBy(pageRequest));
+        if (ids == null || ids.isEmpty()) {
+            return UserMapper.toUserDtoList(userRepository.findAllBy(pageRequest));
+        }
         return UserMapper.toUserDtoList(userRepository.findByIdIn(ids, pageRequest));
     }
 

@@ -29,7 +29,6 @@ public class EwmStatsAppConfig implements WebMvcConfigurer {
 
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
-
         return builder -> {
             builder.simpleDateFormat(localDateTimeFormat);
             builder.serializers(new LocalDateSerializer(DateTimeFormatter.ofPattern(localDateFormat)));

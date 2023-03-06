@@ -19,9 +19,9 @@ import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.event.service.EventAdminService;
 import ru.practicum.ewm.event.service.EventPrivateService;
 import ru.practicum.ewm.event.service.EventPublicService;
-import ru.practicum.ewm.exception.ValidationException;
 import ru.practicum.ewm.exception.AccessException;
 import ru.practicum.ewm.exception.ObjectNotFoundException;
+import ru.practicum.ewm.exception.ValidationException;
 import ru.practicum.ewm.location.mapper.LocationMapper;
 import ru.practicum.ewm.location.model.Location;
 import ru.practicum.ewm.location.repository.LocationRepository;
@@ -77,9 +77,13 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
         List<Event> events = findSortedByEventDate(
                 null, text, categories, paid, rangeStart, rangeEnd, from, size, List.of(EventState.PUBLISHED));
         pullConfirmsToEvents(events);
-        if (Boolean.TRUE.equals(onlyAvailable)) events = filterOnlyAvailable(events);
+        if (Boolean.TRUE.equals(onlyAvailable)) {
+            events = filterOnlyAvailable(events);
+        }
         pullStatsToEvents(events);
-        if (eventSort != null && eventSort.equals(EventSort.VIEWS)) events = sortByViews(events);
+        if (eventSort != null && eventSort.equals(EventSort.VIEWS)) {
+            events = sortByViews(events);
+        }
         statisticsService.makeView(request);
         return EventMapper.toEventShortDtoList(events);
     }
@@ -119,9 +123,15 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
                                                LocalDateTime rangeEnd,
                                                Integer from,
                                                Integer size) {
-        if (users != null) validateUsers(users);
-        if (states != null) validateEventStates(states);
-        if (categories != null) validateCategories(categories);
+        if (users != null) {
+            validateUsers(users);
+        }
+        if (states != null) {
+            validateEventStates(states);
+        }
+        if (categories != null) {
+            validateCategories(categories);
+        }
         List<Event> events =
                 findSortedByEventDate(users, null, categories, null, rangeStart, rangeEnd, from, size, states);
         pullConfirmsToEvents(events);
@@ -202,7 +212,9 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
     }
 
     private void validatePublicAccess(Event event) {
-        if (!event.getState().equals(EventState.PUBLISHED)) throw new AccessException("Access denied");
+        if (!event.getState().equals(EventState.PUBLISHED)) {
+            throw new AccessException("Access denied");
+        }
     }
 
     private List<RequestCount> countParticipationRequests(List<Long> eventIds, RequestStatus requestStatus) {
@@ -267,7 +279,9 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
 
     private void validateEventDateForPosting(NewEventDto newEventDto) {
         LocalDateTime eventDate = newEventDto.getEventDate();
-        if (eventDate.isBefore(LocalDateTime.now().plusHours(2L))) throw new ValidationException("Invalid event date");
+        if (eventDate.isBefore(LocalDateTime.now().plusHours(2L))) {
+            throw new ValidationException("Invalid event date");
+        }
     }
 
     private Category findCategory(Long categoryId) {
@@ -362,7 +376,9 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
     }
 
     private void updateEventState(Event event) {
-        if (event.getState().equals(EventState.CANCELED)) event.setState(EventState.PENDING);
+        if (event.getState().equals(EventState.CANCELED)) {
+            event.setState(EventState.PENDING);
+        }
     }
 
     private void validateParticipantLimit(Event event, Integer updateLimit) {
@@ -374,7 +390,9 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
     }
 
     private void validateInitiator(Long userId, Event event) {
-        if (!event.getInitiator().getId().equals(userId)) throw new ValidationException("User is not event initiator");
+        if (!event.getInitiator().getId().equals(userId)) {
+            throw new ValidationException("User is not event initiator");
+        }
     }
 
     private void validateEventStatusForUpdate(Event event) {

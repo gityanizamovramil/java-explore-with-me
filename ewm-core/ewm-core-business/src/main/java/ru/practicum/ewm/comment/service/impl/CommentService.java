@@ -16,10 +16,10 @@ import ru.practicum.ewm.common.CommentState;
 import ru.practicum.ewm.common.EventState;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.repository.EventRepository;
-import ru.practicum.ewm.exception.ValidationException;
-import ru.practicum.ewm.exception.IntegrityException;
 import ru.practicum.ewm.exception.AccessException;
+import ru.practicum.ewm.exception.IntegrityException;
 import ru.practicum.ewm.exception.ObjectNotFoundException;
+import ru.practicum.ewm.exception.ValidationException;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
 
@@ -46,9 +46,15 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
                                                    Integer size) {
         rangeStart = rangeStart == null ? epochStart : rangeStart;
         rangeEnd = rangeEnd == null ? LocalDateTime.now() : rangeEnd;
-        if (users != null) validateUsers(users);
-        if (states != null) validateCommentStates(states);
-        if (events != null) validateEvents(events);
+        if (users != null) {
+            validateUsers(users);
+        }
+        if (states != null) {
+            validateCommentStates(states);
+        }
+        if (events != null) {
+            validateEvents(events);
+        }
         List<Comment> comments =
                 findSortedByCreationDateDesc(users, states, events, text, rangeStart, rangeEnd, from, size);
         return CommentMapper.toCommentFullDtoList(comments);
