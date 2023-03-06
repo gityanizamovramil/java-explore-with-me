@@ -11,8 +11,8 @@ import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.repository.CategoryRepository;
 import ru.practicum.ewm.category.service.CategoryAdminService;
 import ru.practicum.ewm.category.service.CategoryPublicService;
-import ru.practicum.ewm.exception.ConflictException;
-import ru.practicum.ewm.exception.NotFoundException;
+import ru.practicum.ewm.exception.IntegrityException;
+import ru.practicum.ewm.exception.ObjectNotFoundException;
 
 import java.util.List;
 
@@ -57,17 +57,17 @@ public class CategoryServiceImpl implements CategoryPublicService, CategoryAdmin
 
     private void existsById(Long catId) {
         if (!categoryRepository.existsById(catId)) {
-            throw new NotFoundException("Category not found.");
+            throw new ObjectNotFoundException("Category not found.");
         }
     }
 
     private void validateCategoryName(String name) {
         if (Boolean.TRUE.equals(categoryRepository.existsByNameIgnoreCase(name))) {
-            throw new ConflictException("The name of category is already in use.");
+            throw new IntegrityException("The name of category is already in use.");
         }
     }
 
     private Category findById(Long catId) {
-        return categoryRepository.findById(catId).orElseThrow(() -> new NotFoundException("Category not found."));
+        return categoryRepository.findById(catId).orElseThrow(() -> new ObjectNotFoundException("Category not found."));
     }
 }

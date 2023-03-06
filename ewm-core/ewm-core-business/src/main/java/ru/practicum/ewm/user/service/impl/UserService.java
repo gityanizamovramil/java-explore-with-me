@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.exception.ConflictException;
-import ru.practicum.ewm.exception.NotFoundException;
+import ru.practicum.ewm.exception.IntegrityException;
+import ru.practicum.ewm.exception.ObjectNotFoundException;
 import ru.practicum.ewm.user.dto.NewUserRequest;
 import ru.practicum.ewm.user.dto.UserDto;
 import ru.practicum.ewm.user.mapper.UserMapper;
@@ -44,13 +44,13 @@ public class UserService implements UserAdminService {
 
     private void existsById(Long userId) {
         if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("User not found");
+            throw new ObjectNotFoundException("User not found");
         }
     }
 
     private void validateUserEmail(String email) {
         if (Boolean.TRUE.equals(userRepository.existsByEmailIgnoreCase(email))) {
-            throw new ConflictException("The email of user is already in use.");
+            throw new IntegrityException("The email of user is already in use.");
         }
     }
 }

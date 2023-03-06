@@ -14,8 +14,8 @@ import ru.practicum.ewm.compilation.service.CompilationAdminService;
 import ru.practicum.ewm.compilation.service.CompilationPublicService;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.repository.EventRepository;
-import ru.practicum.ewm.exception.BadRequestException;
-import ru.practicum.ewm.exception.NotFoundException;
+import ru.practicum.ewm.exception.ValidationException;
+import ru.practicum.ewm.exception.ObjectNotFoundException;
 import ru.practicum.ewm.request.model.RequestCount;
 import ru.practicum.ewm.request.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.stats.dto.ViewStatsDto;
@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -83,7 +84,7 @@ public class CompilationService implements CompilationPublicService, Compilation
 
     private void existsById(Long compId) {
         if (!compilationRepository.existsById(compId)) {
-            throw new NotFoundException("Compilation not found.");
+            throw new ObjectNotFoundException("Compilation not found.");
         }
     }
 
@@ -126,21 +127,21 @@ public class CompilationService implements CompilationPublicService, Compilation
         return eventIds.stream()
                 .map(eventId -> eventRepository.findById(eventId).orElseThrow(
                         () -> {
-                            throw new NotFoundException("Event for compilation creation is not found");
+                            throw new ObjectNotFoundException("Event for compilation creation is not found");
                         }))
                 .collect(Collectors.toList());
     }
 
     private void validateEventAdding(Compilation compilation, Event event) {
         if (compilation.getEvents().contains(event)) {
-            throw new BadRequestException("Event added to compilation already before");
+            throw new ValidationException("Event added to compilation already before");
         }
     }
 
     private Event findEventById(Long eventId) {
         return eventRepository.findById(eventId).orElseThrow(
                 () -> {
-                    throw new NotFoundException("Event mentioned for compilation adding not found");
+                    throw new ObjectNotFoundException("Event mentioned for compilation adding not found");
                 }
         );
     }
@@ -150,7 +151,7 @@ public class CompilationService implements CompilationPublicService, Compilation
                 .filter(event -> event.getId().equals(eventId))
                 .findFirst().orElseThrow(
                         () -> {
-                            throw new NotFoundException("Event in that compilation not found");
+                            throw new ObjectNotFoundException("Event in that compilation not found");
                         }
                 );
     }
@@ -158,14 +159,13 @@ public class CompilationService implements CompilationPublicService, Compilation
     private Compilation findById(Long compId) {
         return compilationRepository.findById(compId).orElseThrow(
                 () -> {
-                    throw new NotFoundException("Compilation not found.");
+                    throw new ObjectNotFoundException("Compilation not found.");
                 }
         );
     }
 
     private void pullStatsToEvents(List<Event> events) {
-        Map<Long, Event> eventMap = new HashMap<>();
-        events.forEach(e -> eventMap.put(e.getId(), e));
+        Map<Long, Event> eventMap = events.stream().collect(Collectors.toMap(Event::getId, Function.identity()));
         List<Long> eventIds = new ArrayList<>(eventMap.keySet());
         List<ViewStatsDto> views = statisticsService.getSomeViews(epochStart, epochEnd, eventIds, uri, false);
         views.forEach(v -> eventMap.get(v.getIdFromUri()).setViews(v.getHits()));

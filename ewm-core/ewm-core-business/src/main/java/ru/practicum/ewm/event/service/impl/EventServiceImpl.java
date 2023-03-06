@@ -19,9 +19,9 @@ import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.event.service.EventAdminService;
 import ru.practicum.ewm.event.service.EventPrivateService;
 import ru.practicum.ewm.event.service.EventPublicService;
-import ru.practicum.ewm.exception.BadRequestException;
-import ru.practicum.ewm.exception.ForbiddenException;
-import ru.practicum.ewm.exception.NotFoundException;
+import ru.practicum.ewm.exception.ValidationException;
+import ru.practicum.ewm.exception.AccessException;
+import ru.practicum.ewm.exception.ObjectNotFoundException;
 import ru.practicum.ewm.location.mapper.LocationMapper;
 import ru.practicum.ewm.location.model.Location;
 import ru.practicum.ewm.location.repository.LocationRepository;
@@ -158,16 +158,16 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
 
     private void validateEventForReject(Event event) {
         if (event.getState().equals(EventState.PUBLISHED)) {
-            throw new BadRequestException("Event can not be rejected due to it had been published before.");
+            throw new ValidationException("Event can not be rejected due to it had been published before.");
         }
     }
 
     private void validateEventForPublish(Event event) {
         if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(1L))) {
-            throw new BadRequestException("Event can not be published less than 1 hour before its date");
+            throw new ValidationException("Event can not be published less than 1 hour before its date");
         }
         if (!event.getState().equals(EventState.PENDING)) {
-            throw new BadRequestException("Event state for publishing can not be anything than pending");
+            throw new ValidationException("Event state for publishing can not be anything than pending");
         }
     }
 
@@ -175,7 +175,7 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
         states.forEach(s -> {
             List<EventState> values = Arrays.asList(EventState.values());
             if (!values.contains(s)) {
-                throw new NotFoundException("Event state that specified by admin in his list does not exist");
+                throw new ObjectNotFoundException("Event state that specified by admin in his list does not exist");
             }
         });
 
@@ -184,7 +184,7 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
     private void validateCategories(List<Long> categories) {
         categories.forEach(id -> {
             if (!categoryRepository.existsById(id)) {
-                throw new NotFoundException("Category does not found in specified by admin category id list");
+                throw new ObjectNotFoundException("Category does not found in specified by admin category id list");
             }
         });
     }
@@ -192,17 +192,17 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
     private void validateUsers(List<Long> users) {
         users.forEach(id -> {
             if (!userRepository.existsById(id)) {
-                throw new NotFoundException("User does not found in specified by admin user id list");
+                throw new ObjectNotFoundException("User does not found in specified by admin user id list");
             }
         });
     }
 
     private Event findById(Long eventId) {
-        return eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event not found"));
+        return eventRepository.findById(eventId).orElseThrow(() -> new ObjectNotFoundException("Event not found"));
     }
 
     private void validatePublicAccess(Event event) {
-        if (!event.getState().equals(EventState.PUBLISHED)) throw new ForbiddenException("Access denied");
+        if (!event.getState().equals(EventState.PUBLISHED)) throw new AccessException("Access denied");
     }
 
     private List<RequestCount> countParticipationRequests(List<Long> eventIds, RequestStatus requestStatus) {
@@ -260,14 +260,14 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
         return userRepository.findById(userId)
                 .orElseThrow(
                         () -> {
-                            throw new NotFoundException("Initiator user for event posting not found");
+                            throw new ObjectNotFoundException("Initiator user for event posting not found");
                         }
                 );
     }
 
     private void validateEventDateForPosting(NewEventDto newEventDto) {
         LocalDateTime eventDate = newEventDto.getEventDate();
-        if (eventDate.isBefore(LocalDateTime.now().plusHours(2L))) throw new BadRequestException("Invalid event date");
+        if (eventDate.isBefore(LocalDateTime.now().plusHours(2L))) throw new ValidationException("Invalid event date");
     }
 
     private Category findCategory(Long categoryId) {
@@ -275,7 +275,7 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
         if (categoryId != null) {
             category = categoryRepository.findById(categoryId).orElseThrow(
                     () -> {
-                        throw new NotFoundException("Category not found");
+                        throw new ObjectNotFoundException("Category not found");
                     });
         }
         return category;
@@ -347,7 +347,7 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
 
     private void validateEventStatusForCancel(Event event) {
         if (!event.getState().equals(EventState.PENDING)) {
-            throw new BadRequestException("Only event with pending state can be cancelled");
+            throw new ValidationException("Only event with pending state can be cancelled");
         }
     }
 
@@ -355,7 +355,7 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
         if (categoryId != null) {
             Category category = categoryRepository.findById(categoryId).orElseThrow(
                     () -> {
-                        throw new NotFoundException("Category for event update not found.");
+                        throw new ObjectNotFoundException("Category for event update not found.");
                     });
             event.setCategory(category);
         }
@@ -369,27 +369,27 @@ public class EventServiceImpl implements EventPublicService, EventPrivateService
         pullConfirmsToEvents(List.of(event));
         Long confirms = event.getConfirmedRequests();
         if (updateLimit != 0 && updateLimit < confirms.intValue()) {
-            throw new BadRequestException("Participation limit exceeds number of confirmed participation requests");
+            throw new ValidationException("Participation limit exceeds number of confirmed participation requests");
         }
     }
 
     private void validateInitiator(Long userId, Event event) {
-        if (!event.getInitiator().getId().equals(userId)) throw new BadRequestException("User is not event initiator");
+        if (!event.getInitiator().getId().equals(userId)) throw new ValidationException("User is not event initiator");
     }
 
     private void validateEventStatusForUpdate(Event event) {
         if (event.getState().equals(EventState.PUBLISHED)) {
-            throw new BadRequestException("Event is already published and not allowed for update");
+            throw new ValidationException("Event is already published and not allowed for update");
         }
     }
 
     private void validateEventDateForUpdate(Event event, LocalDateTime update) {
         if (update != null && update.isBefore(LocalDateTime.now().plusHours(2L))) {
-            throw new BadRequestException("New event date cannot be earlier than less 2 hours left for its beginning");
+            throw new ValidationException("New event date cannot be earlier than less 2 hours left for its beginning");
         }
         LocalDateTime eventDate = event.getEventDate();
         if (update == null && eventDate.isBefore(LocalDateTime.now().plusHours(2L))) {
-            throw new BadRequestException("Event cannot be updated before than less 2 hours left for its beginning");
+            throw new ValidationException("Event cannot be updated before than less 2 hours left for its beginning");
         }
     }
 }

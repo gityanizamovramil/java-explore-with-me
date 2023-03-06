@@ -16,10 +16,10 @@ import ru.practicum.ewm.common.CommentState;
 import ru.practicum.ewm.common.EventState;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.repository.EventRepository;
-import ru.practicum.ewm.exception.BadRequestException;
-import ru.practicum.ewm.exception.ConflictException;
-import ru.practicum.ewm.exception.ForbiddenException;
-import ru.practicum.ewm.exception.NotFoundException;
+import ru.practicum.ewm.exception.ValidationException;
+import ru.practicum.ewm.exception.IntegrityException;
+import ru.practicum.ewm.exception.AccessException;
+import ru.practicum.ewm.exception.ObjectNotFoundException;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
 
@@ -57,16 +57,16 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
     private void validateEvents(List<Long> events) {
         events.forEach(id -> {
             if (!eventRepository.existsById(id)) {
-                throw new NotFoundException("Event does not found in specified event id list");
+                throw new ObjectNotFoundException("Event does not found in specified event id list");
             }
         });
     }
 
     private void validateCommentStates(List<CommentState> states) {
+        List<CommentState> values = Arrays.asList(CommentState.values());
         states.forEach(s -> {
-            List<CommentState> values = Arrays.asList(CommentState.values());
             if (!values.contains(s)) {
-                throw new NotFoundException("Comment state that specified in list does not exist");
+                throw new ObjectNotFoundException("Comment state that specified in list does not exist");
             }
         });
     }
@@ -74,7 +74,7 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
     private void validateUsers(List<Long> users) {
         users.forEach(id -> {
             if (!userRepository.existsById(id)) {
-                throw new NotFoundException("User does not found in specified user id list");
+                throw new ObjectNotFoundException("User does not found in specified user id list");
             }
         });
     }
@@ -108,14 +108,14 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
 
     private void validateEventIsPublished(Event event) {
         if (!event.getState().equals(EventState.PUBLISHED)) {
-            throw new ConflictException("Comment cannot be published for nonpublished event");
+            throw new IntegrityException("Comment cannot be published for nonpublished event");
         }
     }
 
     private Comment findById(Long commentId) {
         return commentRepository.findById(commentId).orElseThrow(
                 () -> {
-                    throw new NotFoundException("Comment does not found");
+                    throw new ObjectNotFoundException("Comment does not found");
                 }
         );
     }
@@ -150,7 +150,7 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
 
     private void validateCommentAuthor(Long userId, Comment comment) {
         if (!comment.getAuthor().getId().equals(userId)) {
-            throw new BadRequestException("User does not match to comment author.");
+            throw new ValidationException("User does not match to comment author.");
         }
     }
 
@@ -167,7 +167,7 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
     private Event findEventById(Long eventId) {
         return eventRepository.findById(eventId).orElseThrow(
                 () -> {
-                    throw new NotFoundException("Event not found");
+                    throw new ObjectNotFoundException("Event not found");
                 }
         );
     }
@@ -175,7 +175,7 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
     private User findUserById(Long userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> {
-                    throw new NotFoundException("Author user for comment posting not found");
+                    throw new ObjectNotFoundException("Author user for comment posting not found");
                 }
         );
     }
@@ -220,13 +220,13 @@ public class CommentService implements CommentAdminService, CommentPrivateServic
 
     private void validateCommentIsConfirmed(Comment comment) {
         if (!comment.getState().equals(CommentState.CONFIRMED)) {
-            throw new ForbiddenException("Access denied. Comment does not confirmed yet.");
+            throw new AccessException("Access denied. Comment does not confirmed yet.");
         }
     }
 
     private void validateCommentForEvent(Long eventId, Comment comment) {
         if (!comment.getEvent().getId().equals(eventId)) {
-            throw new BadRequestException("Comment does not match to event");
+            throw new ValidationException("Comment does not match to event");
         }
     }
 }

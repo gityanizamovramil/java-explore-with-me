@@ -6,8 +6,8 @@ import ru.practicum.ewm.common.EventState;
 import ru.practicum.ewm.common.RequestStatus;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.repository.EventRepository;
-import ru.practicum.ewm.exception.BadRequestException;
-import ru.practicum.ewm.exception.NotFoundException;
+import ru.practicum.ewm.exception.ValidationException;
+import ru.practicum.ewm.exception.ObjectNotFoundException;
 import ru.practicum.ewm.request.dto.ParticipationRequestDto;
 import ru.practicum.ewm.request.mapper.ParticipationRequestMapper;
 import ru.practicum.ewm.request.model.ParticipationRequest;
@@ -95,27 +95,27 @@ public class ParticipationRequestService implements ParticipationRequestPrivateS
 
     private void validateEventIsPublished(Event event) {
         if (!event.getState().equals(EventState.PUBLISHED)) {
-            throw new BadRequestException("Participation request is not allowed to non-published event");
+            throw new ValidationException("Participation request is not allowed to non-published event");
         }
     }
 
     private void validateRequestRepeating(Event event, User requester) {
         if (participationRequestRepository.existsByRequesterIdAndEventId(requester.getId(), event.getId()))
-            throw new BadRequestException("Participation request for the event is already created before by user");
+            throw new ValidationException("Participation request for the event is already created before by user");
     }
 
     private Event findEventById(Long eventId) {
         return eventRepository.findById(eventId)
                 .orElseThrow(
                         () -> {
-                            throw new NotFoundException("Event for participation request not found");
+                            throw new ObjectNotFoundException("Event for participation request not found");
                         }
                 );
     }
 
     private void validateRequesterIsNotInitiator(Event event, User requester) {
         if (event.getInitiator().getId().equals(requester.getId())) {
-            throw new BadRequestException("Event participation requester cannot be initiator of that event");
+            throw new ValidationException("Event participation requester cannot be initiator of that event");
         }
     }
 
@@ -123,14 +123,14 @@ public class ParticipationRequestService implements ParticipationRequestPrivateS
         return userRepository.findById(userId)
                 .orElseThrow(
                         () -> {
-                            throw new NotFoundException("Event for participation request not found");
+                            throw new ObjectNotFoundException("Event for participation request not found");
                         }
                 );
     }
 
     private void validateCancel(ParticipationRequest participationRequest) {
         if (participationRequest.getStatus().equals(RequestStatus.CANCELED)) {
-            throw new BadRequestException("Participation request is already cancelled before");
+            throw new ValidationException("Participation request is already cancelled before");
         }
     }
 
@@ -150,26 +150,26 @@ public class ParticipationRequestService implements ParticipationRequestPrivateS
     private ParticipationRequest findById(Long reqId) {
         return participationRequestRepository.findById(reqId)
                 .orElseThrow(() -> {
-                            throw new NotFoundException("Request not found");
+                            throw new ObjectNotFoundException("Request not found");
                         }
                 );
     }
 
     private void validateEventId(Event event, Long eventId) {
         if (!event.getId().equals(eventId)) {
-            throw new BadRequestException("Event does not match for participation request");
+            throw new ValidationException("Event does not match for participation request");
         }
     }
 
     private void validateInitiatorId(User initiator, Long userId) {
         if (!initiator.getId().equals(userId)) {
-            throw new BadRequestException("Initiator does not match for event of the participation request");
+            throw new ValidationException("Initiator does not match for event of the participation request");
         }
     }
 
     private void validateRequester(User requester, Long userId) {
         if (!requester.getId().equals(userId)) {
-            throw new BadRequestException("Requester does not match for event of the participation request");
+            throw new ValidationException("Requester does not match for event of the participation request");
         }
     }
 
@@ -179,7 +179,7 @@ public class ParticipationRequestService implements ParticipationRequestPrivateS
         }
         Long confirms = participationRequestRepository.countByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED);
         if (confirms >= event.getParticipantLimit()) {
-            throw new BadRequestException("Event already out of participant limit");
+            throw new ValidationException("Event already out of participant limit");
         }
     }
 }
