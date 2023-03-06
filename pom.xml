@@ -23,8 +23,8 @@
     </properties>
 
     <modules>
-        <module>ewm-core</module> <!-- added-->
-        <module>ewm-statistics</module> <!-- added-->
+        <module>ewm-core</module>
+        <module>ewm-statistics</module>
     </modules>
 
     <dependencyManagement>
@@ -46,13 +46,13 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.springframework.boot</groupId> <!-- added-->
-                    <artifactId>spring-boot-maven-plugin</artifactId> <!-- added-->
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
                     <configuration>
                         <excludes>
                             <exclude>
-                                <groupId>org.projectlombok</groupId> <!-- added-->
-                                <artifactId>lombok</artifactId> <!-- added-->
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
                             </exclude>
                         </excludes>
                     </configuration>
